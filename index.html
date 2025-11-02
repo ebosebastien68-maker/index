@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Three.js — Démo moderne (multi-animations)</title>
+  <style>
+    html,body{height:100%;margin:0;background:#0b0f14;color:#ddd;font-family:Inter,Arial,Helvetica,sans-serif}
+    #ui {
+      position: absolute; top: 12px; left: 12px; z-index: 10;
+      background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px;
+      backdrop-filter: blur(6px);
+    }
+    .hint { font-size:13px; color:#9fb; margin-bottom:6px }
+    a.link { color:#7fd; text-decoration:none }
+    #footer {
+      position: absolute; left:12px; bottom:12px; z-index:10;
+      font-size:12px; color:#9aa;
+      background: rgba(0,0,0,0.25); padding:6px 8px; border-radius:6px;
+    }
+    canvas { display:block }
+    #overlay-log {
+      position: absolute; right: 12px; top: 12px; z-index: 10;
+      max-width:360px; background: rgba(0,0,0,0.45);
+      color:#cfe; padding:10px; border-radius:8px; font-family:monospace;
+      font-size:12px; line-height:1.4;
+      max-height:60vh; overflow:auto;
+    }
+    .badge { display:inline-block; padding:4px 8px; border-radius:6px; background:#071; color:#eaffea; font-weight:600; margin-right:6px }
+  </style>
+</head>
+<body>
+  <div id="ui">
+    <div class="hint"><span class="badge">Demo</span>Three.js — multi-animations · tourne sur mobile & desktop</div>
+    <div style="font-size:13px">Contrôles : souris / drag → orbite · scroll → zoom · touche <strong>H</strong> → basculer UI</div>
+    <div style="margin-top:8px"><a class="link" href="#" id="resetCam">Réinitialiser caméra</a></div>
+  </div>
+
+  <div id="overlay-log">Démarrage…</div>
+  <div id="footer">Sauvegarde: index.html — Serveur local recommandé (Termux)</div>
+
+  <!-- Three.js et extras depuis CDN (assure-toi d'avoir internet ou un serveur local autorisant CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.161.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lil-gui@0.18.0/dist/lil-gui.min.js"></script>
+
+  <script>
+  // -------------------------------------------------------
+  // Demo Three.js moderne — multi-animations / ~500 lignes
+  // -------------------------------------------------------
+
+  // UTIL: log to overlay
+  const overlay = document.getElementById('overlay-log');
+  function log(msg, cls='') {
+    const d = document.createElement('div');
+    d.textContent = msg;
+    if(cls) d.className = cls;
+    overlay.appendChild(d);
+    overlay.scrollTop = overlay.scrollHeight;
+    console.log(msg);
+  }
+
+  // Basic feature check
+  log('Vérification WebGL...');
+  const testCanvas = document.createElement('canvas');
+  const gl = testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
+  if(!gl){ log('WebGL NON disponible. Utilise Chrome/Firefox et active l\'accélération.', 'err'); throw new Error('WebGL unavailable'); }
+  log('WebGL disponible.');
+
+  if(typeof THREE === 'undefined') {
+    log('Three.js NON chargé — vérifie la connexion CDN.', 'err');
+    throw new Error('Three.js missing');
+  }
+  log('Three.js chargé (r' + (THREE.REVISION || '??') + ').');
+
+  // Scene / camera / renderer
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x05060a);
+
+  const camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.05, 2000);
+  camera.position.set(0, 1.2, 4.0);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  document.body.appendChild(renderer.domElement);
+
+  // Controls
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.minDistance = 1.2;
+  controls.maxDistance = 20;
+  controls.target.set(0,0.6,0);
+
+  // Lights (directional + rim + ambient)
+  const dirLight = new THREE.DirectionalLight(0xffffff, 1.1);
+  dirLight.position.set(3, 6, 2);
+  dirLight.castShadow = true;
+  dirLight.shadow.mapSize.set(2048,2048);
+  dirLight.shadow.camera.left = -6;
+  dirLight.shadow.camera.right = 6;
+  dirLight.shadow.camera.top = 6;
+  dirLight.shadow.camera.bottom = -6;
+  dirLight.shadow.camera.near = 0.5;
+  dirLight.shadow.camera.far = 30;
+  scene.add(dirLight);
+
+  const rim = new THREE.PointLight(0x6fd3ff, 0.25, 0, 2);
+  rim.position.set(-4, 2, -3);
+  scene.add(rim);
+
+  const ambient = new THREE.AmbientLight(0x26313a, 0.6);
+  scene.add(ambient);
+
+  // Ground (large plane with subtle grid)
+  const groundGeo = new THREE.PlaneGeometry(100,100);
+  const groundMat = new THREE.MeshStandardMaterial({ color: 0x0b1014, metalness:0.1, roughness:0.9 });
+  const ground = new THREE.Mesh(groundGeo, groundMat);
+  ground.rotation.x = -Math.PI/2;
+  ground.position.y = -0.75;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  // subtle grid via helper - but keep it performant
+  const grid = new THREE.GridHelper(20, 40, 0x1f3843, 0x0b1216);
+  grid.position.y = -0.751;
+  scene.add(grid);
+
+  // ---------- Objects suite (several animated "systems") ----------
+
+  // 1) Central reflective sphere (uses CubeCamera for dynamic env map)
+  const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(256, { format: THREE.RGBAFormat, generateMipmaps:true, minFilter: THREE.LinearMipmapLinearFilter });
+  const cubeCamera = new THREE.CubeCamera(0.1, 1000, cubeRenderTarget);
+  scene.add(cubeCamera);
+
+  const chromeMat = new THREE.MeshStandardMaterial({
+    envMap: cubeRenderTarget.texture,
+    metalness: 0.95,
+    roughness: 0.12
+  });
+
+  const reflectiveSphere = new THREE.Mesh(new THREE.SphereGeometry(0.65, 48, 48), chromeMat);
+  reflectiveSphere.position.set(0, 0.6, 0);
+  reflectiveSphere.castShadow = true;
+  reflectiveSphere.receiveShadow = true;
+  scene.add(reflectiveSphere);
+
+  // 2) Torus cluster (animated)
+  const torusGroup = new THREE.Group();
+  const torusMat = new THREE.MeshStandardMaterial({ color: 0xff8d3c, metalness:0.5, roughness:0.35 });
+  for(let i=0;i<6;i++){
+    const t = new THREE.Mesh(new THREE.TorusGeometry(0.35, 0.11, 24, 64), torusMat);
+    const a = (i/6) * Math.PI * 2;
+    t.position.set(Math.cos(a)*1.6, 0.4 + (i%2)*0.12, Math.sin(a)*1.6);
+    t.rotation.x = Math.random()*0.6;
+    t.castShadow = true;
+    torusGroup.add(t);
+  }
+  scene.add(torusGroup);
+
+  // 3) Particle field (Points) — GPU-friendly BufferGeometry
+  const particleCount = 1200;
+  const positions = new Float32Array(particleCount * 3);
+  const sizes = new Float32Array(particleCount);
+  for(let i=0;i<particleCount;i++){
+    const t = Math.random()*Math.PI*2;
+    const r = 1.8 + Math.random()*3.6;
+    const y = (Math.random()-0.5) * 1.6;
+    positions[i*3+0] = Math.cos(t)*r;
+    positions[i*3+1] = y;
+    positions[i*3+2] = Math.sin(t)*r;
+    sizes[i] = 6 + Math.random()*22;
+  }
+
+  const particleGeo = new THREE.BufferGeometry();
+  particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  particleGeo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+  // Points material with a small circular sprite generated on-the-fly via canvas
+  function makeSpriteTexture(){
+    const s = 128;
+    const c = document.createElement('canvas');
+    c.width = c.height = s;
+    const ctx = c.getContext('2d');
+    const g = ctx.createRadialGradient(s/2,s/2,2,s/2,s/2,s/1.6);
+    g.addColorStop(0, 'rgba(255,255,255,1)');
+    g.addColorStop(0.2, 'rgba(240,220,255,0.85)');
+    g.addColorStop(0.5, 'rgba(120,180,255,0.45)');
+    g.addColorStop(1, 'rgba(10,10,20,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,s,s);
+    return new THREE.CanvasTexture(c);
+  }
+  const spriteTexture = makeSpriteTexture();
+
+  const particleMat = new THREE.PointsMaterial({
+    map: spriteTexture,
+    size: 8,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending
+  });
+  const particles = new THREE.Points(particleGeo, particleMat);
+  particles.frustumCulled = false;
+  scene.add(particles);
+
+  // 4) Instanced "city" (many boxes) showing instancing power
+  const INSTANCE_COUNT = 220;
+  const boxGeo = new THREE.BoxGeometry(1,1,1);
+  const instMat = new THREE.MeshStandardMaterial({ color: 0x6fb4ff, roughness:0.6, metalness:0.05 });
+  const instMesh = new THREE.InstancedMesh(boxGeo, instMat, INSTANCE_COUNT);
+  instMesh.castShadow = true;
+  instMesh.receiveShadow = true;
+
+  const dummy = new THREE.Object3D();
+  for(let i=0;i<INSTANCE_COUNT;i++){
+    const a = i / INSTANCE_COUNT;
+    const ang = a * Math.PI * 2 * 4;
+    const rad = 2.6 + Math.random()*6.0;
+    const x = Math.cos(ang) * rad;
+    const z = Math.sin(ang) * rad;
+    const h = 0.3 + Math.random()*4.2;
+    dummy.position.set(x, h/2 - 0.75, z);
+    dummy.scale.set(0.6, h, 0.6);
+    dummy.lookAt(0, dummy.position.y, 0);
+    dummy.updateMatrix();
+    instMesh.setMatrixAt(i, dummy.matrix);
+  }
+  scene.add(instMesh);
+
+  // 5) Animated plane (wavy) using simple vertex displacement shader material
+  const planeGeo = new THREE.PlaneGeometry(8, 8, 120, 120);
+  const planeMat = new THREE.MeshStandardMaterial({ color: 0x071226, metalness:0.1, roughness:0.7, side: THREE.DoubleSide });
+  const water = new THREE.Mesh(planeGeo, planeMat);
+  water.rotation.x = -Math.PI/2;
+  water.position.y = -0.72;
+  water.receiveShadow = true;
+  scene.add(water);
+
+  // We'll displace vertices manually each frame (simple, avoids custom shaders)
+  // Precompute base positions
+  const basePos = planeGeo.attributes.position.array.slice();
+
+  // GUI and params
+  const params = {
+    rotateSpeed: 0.8,
+    particlesSpeed: 0.6,
+    showParticles: true,
+    showInstanced: true,
+    showTorus: true,
+    envUpdate: true,
+    exposure: 1.0,
+    metallic: chromeMat.metalness,
+    roughness: chromeMat.roughness
+  };
+
+  // Lil-gui
+  const gui = new window.lil.GUI({ width: 310 });
+  gui.add(params, 'rotateSpeed', 0.0, 3.5, 0.01).name('Vitesse globale');
+  gui.add(params, 'particlesSpeed', 0.0, 2.0, 0.01).name('Vitesse particules');
+  gui.add(params, 'showParticles').name('Afficher particules').onChange(v => particles.visible = v);
+  gui.add(params, 'showInstanced').name('Afficher instances').onChange(v => instMesh.visible = v);
+  gui.add(params, 'showTorus').name('Afficher torus').onChange(v => torusGroup.visible = v);
+  gui.add(params, 'envUpdate').name('Mise à jour env map');
+  gui.add(params, 'exposure', 0.3, 2.2, 0.01).name('Exposition').onChange(v => renderer.toneMappingExposure = v);
+  gui.add(params, 'metallic', 0, 1, 0.01).name('Métal (sphere)').onChange(v => chromeMat.metalness = v);
+  gui.add(params, 'roughness', 0, 1, 0.01).name('Rugosité (sphere)').onChange(v => chromeMat.roughness = v);
+  gui.domElement.style.position = 'absolute';
+  gui.domElement.style.top = '12px';
+  gui.domElement.style.right = '12px';
+  gui.domElement.style.zIndex = 20;
+
+  // Reset camera helper
+  document.getElementById('resetCam').onclick = (e)=>{ e.preventDefault(); camera.position.set(0,1.2,4); controls.target.set(0,0.6,0); controls.update(); log('Caméra réinitialisée'); };
+
+  // Keyboard UI toggle
+  window.addEventListener('keydown', (e)=>{
+    if(e.key.toLowerCase() === 'h') {
+      gui.domElement.style.display = gui.domElement.style.display === 'none' ? 'block' : 'none';
+      document.getElementById('ui').style.display = document.getElementById('ui').style.display === 'none' ? 'block' : 'none';
+    }
+  });
+
+  // Animation loop variables
+  let clock = new THREE.Clock();
+  let accum = 0;
+
+  // Performance-friendly update: limit env map updates to once per ~0.25s when enabled
+  let envAccumulator = 0;
+
+  // Main render loop
+  function animate() {
+    const dt = Math.min(clock.getDelta(), 0.05);
+    accum += dt * params.rotateSpeed;
+    envAccumulator += dt;
+
+    // rotate torus group
+    torusGroup.rotation.y = Math.sin(accum*0.4) * 0.8;
+    torusGroup.children.forEach((t,i)=>{
+      t.rotation.z = accum * 0.3 * (i%2 ? 1 : -1) + i*0.2;
+    });
+
+    // rotate instanced matrix slowly (global)
+    instMesh.rotation.y = accum * 0.05;
+
+    // reflect sphere: update cube camera occasionally if enabled
+    if(params.envUpdate && envAccumulator > 0.22){
+      envAccumulator = 0;
+      // hide sphere to avoid self-reflection
+      reflectiveSphere.visible = false;
+      cubeCamera.position.copy(reflectiveSphere.position);
+      cubeCamera.update(renderer, scene);
+      reflectiveSphere.visible = true;
+    }
+
+    // particles orbit
+    const positions = particleGeo.attributes.position.array;
+    for(let i=0;i<particleCount;i++){
+      const ix = i*3;
+      const iy = ix+1;
+      const iz = ix+2;
+      // radial oscillation
+      const t = (i*0.002 + accum*params.particlesSpeed);
+      const r = Math.sqrt(positions[ix]*positions[ix] + positions[iz]*positions[iz]);
+      // gently move outward/inward
+      positions[ix] = positions[ix] * Math.cos(0.0003 * dt * 100) - positions[iz] * Math.sin(0.0003 * dt * 100);
+      positions[iz] = positions[ix] * Math.sin(0.0003 * dt * 100) + positions[iz] * Math.cos(0.0003 * dt * 100);
+      // slight vertical bob
+      positions[iy] += Math.sin(t*4 + i*0.01) * 0.0008;
+    }
+    particleGeo.attributes.position.needsUpdate = true;
+
+    // plane vertex displacement (wave)
+    const pos = planeGeo.attributes.position.array;
+    const len = pos.length;
+    for(let i=0;i<len;i+=3){
+      const ox = basePos[i], oy = basePos[i+1], oz = basePos[i+2];
+      const v = Math.sin((ox + accum*0.8)*1.1) * Math.cos((oz + accum*0.7)*1.3) * 0.035;
+      pos[i+1] = oy + v;
+    }
+    planeGeo.attributes.position.needsUpdate = true;
+    planeGeo.computeVertexNormals();
+
+    // reflective sphere slow spin
+    reflectiveSphere.rotation.y += 0.01 * params.rotateSpeed;
+    reflectiveSphere.rotation.x += 0.005 * params.rotateSpeed;
+
+    // small ambient animation: rim light bob
+    rim.position.x = Math.sin(accum*0.6) * 4.0;
+    rim.position.z = Math.cos(accum*0.4) * 3.0;
+
+    // camera subtle floating
+    camera.position.x += (Math.sin(accum*0.08) * 0.002);
+    controls.update();
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  }
+
+  // Start
+  log('Initialisation terminée — lancement animation');
+  animate();
+
+  // Responsiveness
+  window.addEventListener('resize', ()=>{
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  // Helpful: expose scene objects for console debugging
+  window.__SCENE__ = { scene, camera, renderer, controls };
+  log('Objets exposés sur window.__SCENE__ pour debug');
+
+  // Small safety: if renderer fails to init, show message
+  try {
+    renderer.info.reset();
+  } catch(e) {
+    log('Renderer info reset failed: ' + e.message, 'err');
+  }
+
+  // Final tips
+  log('Astuce : appuie sur H pour masquer/afficher l\'interface.');
+  log('Paramètres disponibles : vitesse, particules, instances, envMap, exposition, métal/rugosité.');
+  log('Si l\'affichage est lent sur mobile, réduis "Vitesse globale" et "ParticlesSpeed" ou baisse la taille de rendu DPR.');
+  </script>
+</body>
+</html>
