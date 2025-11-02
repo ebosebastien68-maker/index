@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Awalé 3D Challenge Pro</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -10,8 +10,9 @@
       width: 100%; 
       height: 100%; 
       font-family: 'Papyrus', 'Brush Script MT', cursive; 
-      background: linear-gradient(135deg, #e8d5b7 0%, #d4c5a9 100%);
+      background: linear-gradient(135deg, #f5e6d3 0%, #e8d5b7 50%, #d4c5a9 100%);
       overflow: hidden;
+      touch-action: none;
     }
     
     #canvas-container {
@@ -31,11 +32,11 @@
     
     #landing, #game-ui {
       position: absolute;
-      background: rgba(245, 230, 195, 0.98);
+      background: linear-gradient(145deg, #f5e6d3 0%, #e8d5b7 100%);
       padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 10px 40px rgba(90, 62, 27, 0.6);
-      border: 4px solid #8b5e3c;
+      border-radius: 20px;
+      box-shadow: 0 15px 50px rgba(90, 62, 27, 0.7), inset 0 2px 5px rgba(255, 255, 255, 0.3);
+      border: 5px solid #8b5e3c;
       pointer-events: all;
     }
     
@@ -43,25 +44,28 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 350px;
+      width: 90%;
+      max-width: 380px;
     }
     
     #game-ui {
-      top: 20px;
+      top: 10px;
       left: 50%;
       transform: translateX(-50%);
       width: auto;
-      min-width: 400px;
+      min-width: 300px;
+      max-width: 90%;
       text-align: center;
+      padding: 20px;
     }
     
     h1 { 
       text-align: center; 
-      margin-bottom: 20px; 
+      margin-bottom: 25px; 
       color: #3d2817;
-      font-size: 2.8em;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-      letter-spacing: 8px;
+      font-size: 3em;
+      text-shadow: 3px 3px 6px rgba(0,0,0,0.4), 0 0 20px rgba(139, 94, 60, 0.5);
+      letter-spacing: 10px;
       font-weight: bold;
     }
     
@@ -71,39 +75,47 @@
     
     input[type="text"], select, input[type="range"] { 
       width: 100%; 
-      padding: 8px; 
+      padding: 10px; 
       margin-top: 6px;
-      border: 2px solid #8b5e3c;
-      border-radius: 5px;
+      border: 3px solid #8b5e3c;
+      border-radius: 8px;
       background: #fff;
       font-family: 'Segoe UI', sans-serif;
+      font-size: 14px;
     }
     
     label { 
       display: block; 
-      font-size: 14px; 
+      font-size: 15px; 
       margin-top: 10px;
       color: #5a3e1b;
       font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
     }
     
     button { 
       width: 100%; 
-      padding: 12px; 
+      padding: 14px; 
       margin-top: 15px; 
       font-size: 18px; 
       background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
       color: #fff; 
       border: none; 
-      border-radius: 8px; 
+      border-radius: 10px; 
       cursor: pointer;
       font-weight: bold;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      transition: transform 0.2s;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
     }
     
     button:hover { 
       transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+    }
+    
+    button:active {
+      transform: scale(0.98);
     }
     
     #info { 
@@ -111,6 +123,7 @@
       margin-bottom: 10px;
       color: #3d2817;
       font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
     }
     
     #timer { 
@@ -118,15 +131,17 @@
       color: #e74c3c; 
       margin-bottom: 10px;
       font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
     }
     
     #scores { 
       display: flex; 
-      justify-content: space-between; 
+      justify-content: space-around; 
       margin-bottom: 10px; 
       font-size: 18px;
       color: #3d2817;
       font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
     }
     
     #restartBtn { 
@@ -136,17 +151,17 @@
     .btn-chambre-reception {
       display: inline-block;
       width: 100%;
-      padding: 12px;
+      padding: 14px;
       margin-top: 15px;
       font-size: 16px;
       font-weight: 700;
       text-align: center;
       text-decoration: none;
       color: white;
-      border-radius: 8px;
+      border-radius: 10px;
       transition: all 0.3s ease;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
       background: linear-gradient(45deg, #FF6B6B, #F06595, #6C5CE7, #48A9A6);
       background-size: 400% 400%;
       animation: gradient-animation 10s ease infinite;
@@ -154,6 +169,7 @@
     
     .btn-chambre-reception:hover {
       transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
     }
     
     @keyframes gradient-animation {
@@ -163,6 +179,32 @@
     }
 
     .hidden { display: none !important; }
+    
+    @media (max-width: 600px) {
+      h1 { font-size: 2.2em; letter-spacing: 6px; }
+      #landing { padding: 20px; }
+      #game-ui { padding: 15px; min-width: 280px; }
+      button { padding: 12px; font-size: 16px; }
+    }
+    
+    @media (orientation: portrait) and (max-width: 768px) {
+      body::before {
+        content: "🔄 Veuillez tourner votre appareil en mode paysage pour une meilleure expérience";
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.9);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+        z-index: 10000;
+        font-size: 18px;
+        max-width: 80%;
+        line-height: 1.6;
+      }
+    }
   </style>
 </head>
 <body>
@@ -229,10 +271,10 @@
     
     const parcours = [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [0, 5], [0, 4], [0, 3], [0, 2], [0, 1], [0, 0]];
 
-    // Sons
+    // Sons améliorés
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     
-    function playSound(freq, duration, type = 'sine') {
+    function playSound(freq, duration, type = 'sine', volume = 0.3) {
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
       
@@ -242,23 +284,24 @@
       oscillator.frequency.value = freq;
       oscillator.type = type;
       
-      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
       gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
       
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + duration);
     }
     
-    function playClickSound() { playSound(800, 0.1, 'sine'); }
-    function playDropSound() { playSound(400, 0.15, 'triangle'); }
+    function playClickSound() { playSound(900, 0.08, 'sine', 0.25); }
+    function playDropSound() { playSound(450, 0.12, 'triangle', 0.2); }
     function playCaptureSound() {
-      playSound(600, 0.2, 'square');
-      setTimeout(() => playSound(700, 0.15, 'square'), 50);
+      playSound(650, 0.18, 'square', 0.25);
+      setTimeout(() => playSound(750, 0.15, 'square', 0.2), 40);
+      setTimeout(() => playSound(850, 0.12, 'sine', 0.18), 80);
     }
     function playWinSound() {
-      playSound(523, 0.2);
-      setTimeout(() => playSound(659, 0.2), 100);
-      setTimeout(() => playSound(784, 0.3), 200);
+      playSound(523, 0.2, 'sine', 0.3);
+      setTimeout(() => playSound(659, 0.2, 'sine', 0.3), 120);
+      setTimeout(() => playSound(784, 0.35, 'sine', 0.35), 240);
     }
 
     delayRange.oninput = () => delayValue.textContent = delayRange.value;
@@ -281,47 +324,89 @@
 
     function initThree() {
       scene = new THREE.Scene();
-      scene.background = new THREE.Color(0xfaf5ed);
       
-      camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.set(0, 13, 14);
+      // Fond avec dégradé amélioré
+      const canvas = document.createElement('canvas');
+      canvas.width = 2048;
+      canvas.height = 2048;
+      const ctx = canvas.getContext('2d');
+      const gradient = ctx.createLinearGradient(0, 0, 0, 2048);
+      gradient.addColorStop(0, '#faf5ed');
+      gradient.addColorStop(0.5, '#f5e6d3');
+      gradient.addColorStop(1, '#e8d5b7');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 2048, 2048);
+      
+      const bgTexture = new THREE.CanvasTexture(canvas);
+      scene.background = bgTexture;
+      
+      // Caméra responsive
+      const aspect = window.innerWidth / window.innerHeight;
+      camera = new THREE.PerspectiveCamera(50, aspect, 0.1, 1000);
+      
+      // Position adaptative de la caméra
+      if (aspect < 1.2) {
+        camera.position.set(0, 16, 16);
+        camera.fov = 60;
+      } else {
+        camera.position.set(0, 13, 14);
+        camera.fov = 50;
+      }
+      camera.updateProjectionMatrix();
       camera.lookAt(0, 0, 0);
       
-      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       renderer.physicallyCorrectLights = true;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.2;
       document.getElementById('canvas-container').appendChild(renderer.domElement);
       
-      // Lumières optimisées pour voir les graines
-      const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
+      // Système d'éclairage amélioré pour voir les graines
+      const ambientLight = new THREE.AmbientLight(0xfff8f0, 1.5);
       scene.add(ambientLight);
       
-      const mainLight = new THREE.DirectionalLight(0xffffff, 1.5);
-      mainLight.position.set(8, 20, 10);
+      const mainLight = new THREE.DirectionalLight(0xfff5e6, 2.0);
+      mainLight.position.set(10, 25, 12);
       mainLight.castShadow = true;
       mainLight.shadow.mapSize.width = 4096;
       mainLight.shadow.mapSize.height = 4096;
-      mainLight.shadow.camera.left = -25;
-      mainLight.shadow.camera.right = 25;
-      mainLight.shadow.camera.top = 25;
-      mainLight.shadow.camera.bottom = -25;
-      mainLight.shadow.bias = -0.0005;
+      mainLight.shadow.camera.left = -30;
+      mainLight.shadow.camera.right = 30;
+      mainLight.shadow.camera.top = 30;
+      mainLight.shadow.camera.bottom = -30;
+      mainLight.shadow.bias = -0.0003;
+      mainLight.shadow.radius = 2;
       scene.add(mainLight);
       
-      // Lumières pour éclairer l'intérieur des trous
-      const fillLight1 = new THREE.PointLight(0xffffff, 0.8, 30);
-      fillLight1.position.set(-5, 3, -2);
+      // Lumières de remplissage pour éliminer les ombres dans les trous
+      const fillLight1 = new THREE.PointLight(0xfff8f0, 1.2, 35);
+      fillLight1.position.set(-6, 5, -3);
       scene.add(fillLight1);
       
-      const fillLight2 = new THREE.PointLight(0xffffff, 0.8, 30);
-      fillLight2.position.set(5, 3, 2);
+      const fillLight2 = new THREE.PointLight(0xfff8f0, 1.2, 35);
+      fillLight2.position.set(6, 5, 3);
       scene.add(fillLight2);
       
-      const topLight = new THREE.DirectionalLight(0xfff8f0, 0.7);
-      topLight.position.set(0, 15, 0);
+      const fillLight3 = new THREE.PointLight(0xfff8f0, 0.9, 30);
+      fillLight3.position.set(0, 5, -4);
+      scene.add(fillLight3);
+      
+      const fillLight4 = new THREE.PointLight(0xfff8f0, 0.9, 30);
+      fillLight4.position.set(0, 5, 4);
+      scene.add(fillLight4);
+      
+      // Lumière zénithale douce
+      const topLight = new THREE.DirectionalLight(0xffffff, 1.0);
+      topLight.position.set(0, 20, 0);
       scene.add(topLight);
+      
+      // Hémisphère pour éclairage naturel
+      const hemiLight = new THREE.HemisphereLight(0xffffff, 0xe8d5b7, 0.8);
+      scene.add(hemiLight);
       
       raycaster = new THREE.Raycaster();
       mouse = new THREE.Vector2();
@@ -329,6 +414,8 @@
       window.addEventListener('resize', onWindowResize);
       renderer.domElement.addEventListener('click', onMouseClick);
       renderer.domElement.addEventListener('mousemove', onMouseMove);
+      renderer.domElement.addEventListener('touchstart', onTouchStart, { passive: false });
+      renderer.domElement.addEventListener('touchend', onTouchEnd, { passive: false });
       
       createBoard();
       animate3D();
@@ -340,47 +427,57 @@
       canvas.height = 2048;
       const ctx = canvas.getContext('2d');
       
+      // Base bois riche
       const gradient = ctx.createLinearGradient(0, 0, 2048, 2048);
-      gradient.addColorStop(0, '#c9a876');
-      gradient.addColorStop(0.3, '#b89968');
-      gradient.addColorStop(0.6, '#a68958');
+      gradient.addColorStop(0, '#d4a574');
+      gradient.addColorStop(0.2, '#c9a876');
+      gradient.addColorStop(0.5, '#b89968');
+      gradient.addColorStop(0.8, '#a68958');
       gradient.addColorStop(1, '#8b7355');
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, 2048, 2048);
       
-      // Veines
-      for (let i = 0; i < 100; i++) {
-        ctx.strokeStyle = `rgba(${60 + Math.random() * 30}, ${40 + Math.random() * 20}, ${25 + Math.random() * 15}, ${0.15 + Math.random() * 0.25})`;
-        ctx.lineWidth = 1 + Math.random() * 3;
+      // Veines du bois détaillées
+      for (let i = 0; i < 150; i++) {
+        ctx.strokeStyle = `rgba(${50 + Math.random() * 40}, ${35 + Math.random() * 25}, ${20 + Math.random() * 20}, ${0.12 + Math.random() * 0.28})`;
+        ctx.lineWidth = 0.8 + Math.random() * 3.5;
         ctx.beginPath();
         const startX = Math.random() * 2048;
         ctx.moveTo(startX, 0);
         
-        for (let j = 0; j < 6; j++) {
-          const cpX = startX + (Math.random() - 0.5) * 600;
-          const cpY = j * 350 + (Math.random() - 0.5) * 150;
-          const endX = startX + (Math.random() - 0.5) * 800;
-          const endY = (j + 1) * 350;
+        for (let j = 0; j < 8; j++) {
+          const cpX = startX + (Math.random() - 0.5) * 700;
+          const cpY = j * 300 + (Math.random() - 0.5) * 180;
+          const endX = startX + (Math.random() - 0.5) * 900;
+          const endY = (j + 1) * 300;
           ctx.quadraticCurveTo(cpX, cpY, endX, endY);
         }
         ctx.stroke();
       }
       
-      // Nœuds
-      for (let i = 0; i < 30; i++) {
+      // Nœuds du bois
+      for (let i = 0; i < 40; i++) {
         const x = Math.random() * 2048;
         const y = Math.random() * 2048;
-        const radius = 20 + Math.random() * 50;
+        const radius = 25 + Math.random() * 60;
         
-        for (let ring = 4; ring > 0; ring--) {
-          const grad = ctx.createRadialGradient(x, y, 0, x, y, radius * ring / 4);
-          grad.addColorStop(0, `rgba(70, 45, 30, ${0.25 * ring / 4})`);
-          grad.addColorStop(1, 'rgba(70, 45, 30, 0)');
+        for (let ring = 5; ring > 0; ring--) {
+          const grad = ctx.createRadialGradient(x, y, 0, x, y, radius * ring / 5);
+          grad.addColorStop(0, `rgba(60, 40, 25, ${0.3 * ring / 5})`);
+          grad.addColorStop(1, 'rgba(60, 40, 25, 0)');
           ctx.fillStyle = grad;
           ctx.beginPath();
-          ctx.arc(x, y, radius * ring / 4, 0, Math.PI * 2);
+          ctx.arc(x, y, radius * ring / 5, 0, Math.PI * 2);
           ctx.fill();
         }
+      }
+      
+      // Texture fine
+      for (let i = 0; i < 8000; i++) {
+        const x = Math.random() * 2048;
+        const y = Math.random() * 2048;
+        ctx.fillStyle = `rgba(${80 + Math.random() * 50}, ${50 + Math.random() * 30}, ${30 + Math.random() * 20}, ${0.05 + Math.random() * 0.15})`;
+        ctx.fillRect(x, y, 1 + Math.random() * 2, 0.5 + Math.random());
       }
       
       const texture = new THREE.Texture(canvas);
@@ -396,47 +493,50 @@
       const boardWidth = 19;
       const boardDepth = 9;
       const boardHeight = 1.5;
-      const borderHeight = 1.2;
+      const borderHeight = 1.3;
       const borderThickness = 1;
       
       const woodTexture = createWoodTexture();
       
-      // Base du plateau
-      const baseGeometry = new THREE.BoxGeometry(boardWidth, 0.5, boardDepth);
+      // Base du plateau avec texture
+      const baseGeometry = new THREE.BoxGeometry(boardWidth, 0.6, boardDepth);
       const baseMaterial = new THREE.MeshStandardMaterial({
         map: woodTexture,
         color: 0xa68958,
-        roughness: 0.75,
-        metalness: 0.05
+        roughness: 0.7,
+        metalness: 0.08,
+        envMapIntensity: 0.5
       });
       const base = new THREE.Mesh(baseGeometry, baseMaterial);
-      base.position.y = -boardHeight / 2 - 0.25;
+      base.position.y = -boardHeight / 2 - 0.3;
       base.receiveShadow = true;
       base.castShadow = true;
       boardGroup.add(base);
       
-      // Surface intérieure CLAIRE pour voir les graines
+      // Surface intérieure ultra-claire pour maximum de visibilité
       const innerGeometry = new THREE.BoxGeometry(
         boardWidth - borderThickness * 2,
-        0.4,
+        0.5,
         boardDepth - borderThickness * 2
       );
       const innerMaterial = new THREE.MeshStandardMaterial({
-        color: 0xd4c4a8, // Couleur très claire
-        roughness: 0.6,
-        metalness: 0.1
+        color: 0xf5e6d3, // Couleur papyrus très claire
+        roughness: 0.5,
+        metalness: 0.05,
+        emissive: 0xf5e6d3,
+        emissiveIntensity: 0.15
       });
       const inner = new THREE.Mesh(innerGeometry, innerMaterial);
-      inner.position.y = -boardHeight / 2 + 0.4;
+      inner.position.y = -boardHeight / 2 + 0.5;
       inner.receiveShadow = true;
       boardGroup.add(inner);
       
-      // Bordures
+      // Bordures avec texture bois
       const borderMaterial = new THREE.MeshStandardMaterial({
         map: woodTexture,
         color: 0x8b7355,
-        roughness: 0.8,
-        metalness: 0.05
+        roughness: 0.75,
+        metalness: 0.08
       });
       
       // Bordure haute
@@ -479,14 +579,14 @@
       rightBorder.receiveShadow = true;
       boardGroup.add(rightBorder);
       
-      // Charnières
+      // Charnières métalliques réalistes
       createHinge(-7, 0);
       createHinge(7, 0);
       
-      // Trous PEU PROFONDS pour voir les graines
+      // Trous peu profonds pour visibilité maximale
       holeObjects = [];
-      const holeRadius = 1.2;
-      const holeDepth = 0.5; // Moins profond !
+      const holeRadius = 1.25;
+      const holeDepth = 0.4; // Très peu profond
       const spacingX = 2.9;
       const spacingZ = 3.5;
       
@@ -505,36 +605,54 @@
     }
 
     function createHinge(x, z) {
-      const hingeGeometry = new THREE.BoxGeometry(0.6, 0.25, 1.2);
+      const hingeGeometry = new THREE.BoxGeometry(0.7, 0.3, 1.3);
       const metalMaterial = new THREE.MeshStandardMaterial({
-        color: 0x4a4a4a,
-        metalness: 0.95,
-        roughness: 0.15
+        color: 0x404040,
+        metalness: 0.98,
+        roughness: 0.12,
+        envMapIntensity: 1.5
       });
       const hinge = new THREE.Mesh(hingeGeometry, metalMaterial);
-      hinge.position.set(x, 0.5, z);
+      hinge.position.set(x, 0.6, z);
       hinge.castShadow = true;
       boardGroup.add(hinge);
       
-      // Axe
+      // Axe brillant
       const axis = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.08, 0.08, 1.3, 16),
+        new THREE.CylinderGeometry(0.1, 0.1, 1.4, 20),
         metalMaterial
       );
-      axis.position.set(x, 0.6, z);
+      axis.position.set(x, 0.7, z);
       axis.rotation.x = Math.PI / 2;
       boardGroup.add(axis);
       
-      // Vis
-      const positions = [[x - 0.2, z - 0.4], [x + 0.2, z - 0.4], [x - 0.2, z + 0.4], [x + 0.2, z + 0.4]];
+      // Vis détaillées
+      const screwMaterial = new THREE.MeshStandardMaterial({ 
+        color: 0x1a1a1a, 
+        metalness: 0.95, 
+        roughness: 0.15 
+      });
+      
+      const positions = [[x - 0.25, z - 0.5], [x + 0.25, z - 0.5], [x - 0.25, z + 0.5], [x + 0.25, z + 0.5]];
       positions.forEach(([px, pz]) => {
         const screw = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.08, 0.08, 0.1, 12),
-          new THREE.MeshStandardMaterial({ color: 0x2a2a2a, metalness: 0.9, roughness: 0.2 })
+          new THREE.CylinderGeometry(0.1, 0.1, 0.12, 16),
+          screwMaterial
         );
-        screw.position.set(px, 0.65, pz);
+        screw.position.set(px, 0.75, pz);
         screw.rotation.x = Math.PI / 2;
         boardGroup.add(screw);
+        
+        // Croix sur la vis
+        const slotGeometry = new THREE.BoxGeometry(0.15, 0.02, 0.02);
+        const slot1 = new THREE.Mesh(slotGeometry, screwMaterial);
+        slot1.position.set(px, 0.81, pz);
+        boardGroup.add(slot1);
+        
+        const slot2 = new THREE.Mesh(slotGeometry, screwMaterial);
+        slot2.position.set(px, 0.81, pz);
+        slot2.rotation.y = Math.PI / 2;
+        boardGroup.add(slot2);
       });
     }
 
@@ -543,40 +661,45 @@
       holeGroup.position.set(x, 0, z);
       holeGroup.userData = { row, col, isHole: true };
       
-      // Parois du trou CLAIRES
-      const holeGeometry = new THREE.CylinderGeometry(radius, radius * 0.95, depth, 48);
+      // Parois du trou très claires
+      const holeGeometry = new THREE.CylinderGeometry(radius, radius * 0.96, depth, 56);
       const holeMaterial = new THREE.MeshStandardMaterial({
-        color: 0xb89968, // Plus clair
-        roughness: 0.8,
-        metalness: 0
+        color: 0xd4c4a8,
+        roughness: 0.75,
+        metalness: 0.02,
+        emissive: 0xd4c4a8,
+        emissiveIntensity: 0.1
       });
       const hole = new THREE.Mesh(holeGeometry, holeMaterial);
-      hole.position.y = -depth / 2 + 0.5;
+      hole.position.y = -depth / 2 + 0.6;
       hole.receiveShadow = true;
       holeGroup.add(hole);
       
-      // Fond du trou CLAIR
-      const bottomGeometry = new THREE.CircleGeometry(radius * 0.95, 48);
+      // Fond du trou ultra-clair
+      const bottomGeometry = new THREE.CircleGeometry(radius * 0.96, 56);
       const bottomMaterial = new THREE.MeshStandardMaterial({
-        color: 0xa68958, // Beaucoup plus clair
-        roughness: 0.7
+        color: 0xe8dcc8,
+        roughness: 0.6,
+        metalness: 0.05,
+        emissive: 0xe8dcc8,
+        emissiveIntensity: 0.2
       });
       const bottom = new THREE.Mesh(bottomGeometry, bottomMaterial);
       bottom.rotation.x = -Math.PI / 2;
-      bottom.position.y = -depth + 0.5;
+      bottom.position.y = -depth + 0.6;
       bottom.receiveShadow = true;
       holeGroup.add(bottom);
       
-      // Bordure arrondie
-      const ringGeometry = new THREE.TorusGeometry(radius, 0.16, 20, 48);
+      // Bordure arrondie élégante
+      const ringGeometry = new THREE.TorusGeometry(radius, 0.18, 24, 56);
       const ringMaterial = new THREE.MeshStandardMaterial({
         color: 0x8b7355,
-        roughness: 0.7,
-        metalness: 0.1
+        roughness: 0.65,
+        metalness: 0.12
       });
       const ring = new THREE.Mesh(ringGeometry, ringMaterial);
       ring.rotation.x = Math.PI / 2;
-      ring.position.y = 0.5;
+      ring.position.y = 0.6;
       ring.castShadow = true;
       ring.receiveShadow = true;
       holeGroup.add(ring);
@@ -585,15 +708,16 @@
     }
 
     function createSeed(x, y, z) {
-      // Graine TRÈS VISIBLE
-      const seedGeometry = new THREE.SphereGeometry(0.28, 24, 24);
-      seedGeometry.scale(1, 0.9, 1.1);
+      // Graine ultra-visible avec éclat naturel
+      const seedGeometry = new THREE.SphereGeometry(0.3, 28, 28);
+      seedGeometry.scale(1, 0.88, 1.12);
       
       const seedColors = [
+        0xfffaf5,  // Blanc neige
         0xfff8f0,  // Blanc cassé
         0xfff0e0,  // Ivoire clair
-        0xffe8d0,  // Crème
-        0xffd8b8,  // Beige très clair
+        0xffe8d0,  // Crème légère
+        0xffddb8,  // Beige très pâle
         0xf5e6d2   // Beige clair
       ];
       
@@ -601,10 +725,12 @@
       
       const seedMaterial = new THREE.MeshStandardMaterial({
         color: color,
-        roughness: 0.5,
-        metalness: 0.1,
+        roughness: 0.45,
+        metalness: 0.15,
         emissive: color,
-        emissiveIntensity: 0.15 // Graine qui brille
+        emissiveIntensity: 0.25,
+        clearcoat: 0.3,
+        clearcoatRoughness: 0.4
       });
       
       const seed = new THREE.Mesh(seedGeometry, seedMaterial);
@@ -637,29 +763,29 @@
         if (count === 1) {
           sx = pos.x;
           sz = pos.z;
-          sy = 0.1; // Plus haut !
+          sy = 0.35; // Bien visible !
         } else if (count <= 4) {
           const angle = (i / count) * Math.PI * 2 + Math.PI / 4;
-          const radius = 0.5;
+          const radius = 0.52;
           sx = pos.x + Math.cos(angle) * radius;
           sz = pos.z + Math.sin(angle) * radius;
-          sy = 0.1;
+          sy = 0.35;
         } else if (count <= 8) {
           const layer = Math.floor(i / 4);
           const posInLayer = i % 4;
           const angle = (posInLayer / 4) * Math.PI * 2 + Math.PI / 4;
-          const radius = layer === 0 ? 0.55 : 0.3;
+          const radius = layer === 0 ? 0.58 : 0.32;
           sx = pos.x + Math.cos(angle) * radius;
           sz = pos.z + Math.sin(angle) * radius;
-          sy = 0.1 + layer * 0.35;
+          sy = 0.35 + layer * 0.38;
         } else {
           const layer = Math.floor(i / 6);
           const posInLayer = i % 6;
           const angle = (posInLayer / 6) * Math.PI * 2;
-          const radius = 0.4 + (layer % 2) * 0.25;
+          const radius = 0.42 + (layer % 2) * 0.28;
           sx = pos.x + Math.cos(angle) * radius;
           sz = pos.z + Math.sin(angle) * radius;
-          sy = 0.1 + layer * 0.32;
+          sy = 0.35 + layer * 0.35;
         }
         
         seeds.push({ x: sx, y: sy, z: sz });
@@ -689,17 +815,83 @@
     function animate3D() {
       requestAnimationFrame(animate3D);
       
+      // Animation subtile des graines
       seedObjects.forEach((seed, i) => {
-        seed.rotation.y += 0.004 * Math.sin(i * 0.3);
+        seed.rotation.y += 0.003 * Math.sin(i * 0.25);
+        seed.position.y += Math.sin(Date.now() * 0.001 + i * 0.5) * 0.001;
       });
       
       renderer.render(scene, camera);
     }
 
     function onWindowResize() {
-      camera.aspect = window.innerWidth / window.innerHeight;
+      const aspect = window.innerWidth / window.innerHeight;
+      camera.aspect = aspect;
+      
+      // Ajustement de la caméra selon l'aspect ratio
+      if (aspect < 1.2) {
+        camera.fov = 60;
+        camera.position.set(0, 16, 16);
+      } else if (aspect < 1.5) {
+        camera.fov = 55;
+        camera.position.set(0, 14, 15);
+      } else {
+        camera.fov = 50;
+        camera.position.set(0, 13, 14);
+      }
+      
       camera.updateProjectionMatrix();
+      camera.lookAt(0, 0, 0);
       renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    let touchStartPos = null;
+
+    function onTouchStart(event) {
+      event.preventDefault();
+      if (animating) return;
+      
+      const touch = event.touches[0];
+      touchStartPos = { x: touch.clientX, y: touch.clientY };
+      
+      mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+    }
+
+    function onTouchEnd(event) {
+      event.preventDefault();
+      if (animating || !touchStartPos) return;
+      
+      const touch = event.changedTouches[0];
+      const dx = touch.clientX - touchStartPos.x;
+      const dy = touch.clientY - touchStartPos.y;
+      
+      // Vérifier que c'est un tap et pas un swipe
+      if (Math.abs(dx) < 10 && Math.abs(dy) < 10) {
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(holeObjects, true);
+        
+        if (intersects.length > 0) {
+          let hole = intersects[0].object;
+          while (hole.parent && !hole.userData.isHole) {
+            hole = hole.parent;
+          }
+          
+          if (hole.userData.isHole) {
+            const r = hole.userData.row;
+            const c = hole.userData.col;
+            
+            if ((currentPlayer === 1 && r === 1) || (currentPlayer === 2 && r === 0)) {
+              if (board[r][c] > 0) {
+                playClickSound();
+                play(r, c);
+              }
+            }
+          }
+        }
+      }
+      
+      touchStartPos = null;
     }
 
     function onMouseMove(event) {
@@ -712,8 +904,8 @@
       holeObjects.forEach(hole => {
         hole.children.forEach(child => {
           if (child.material && child.material.emissive) {
-            child.material.emissive.setHex(0x000000);
-            child.material.emissiveIntensity = 0;
+            child.material.emissive.setHex(child.material.color.getHex());
+            child.material.emissiveIntensity = child === hole.children[1] ? 0.2 : 0.1;
           }
         });
       });
@@ -732,8 +924,8 @@
             if (board[r][c] > 0) {
               hole.children.forEach(child => {
                 if (child.material && child.material.emissive) {
-                  child.material.emissive.setHex(0xff8800);
-                  child.material.emissiveIntensity = 0.5;
+                  child.material.emissive.setHex(0xffa500);
+                  child.material.emissiveIntensity = 0.6;
                 }
               });
               renderer.domElement.style.cursor = 'pointer';
@@ -811,7 +1003,7 @@
     }
 
     async function animateSeedMovement(seed, startPos, endPos) {
-      const duration = 700;
+      const duration = 650;
       const startTime = Date.now();
       
       return new Promise(resolve => {
@@ -821,14 +1013,14 @@
           
           const easeT = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
           
-          const height = 3.5;
+          const height = 3.8;
           seed.position.x = startPos.x + (endPos.x - startPos.x) * easeT;
           seed.position.z = startPos.z + (endPos.z - startPos.z) * easeT;
           seed.position.y = startPos.y + Math.sin(easeT * Math.PI) * height;
           
-          seed.rotation.x += 0.18;
-          seed.rotation.y += 0.15;
-          seed.rotation.z += 0.12;
+          seed.rotation.x += 0.2;
+          seed.rotation.y += 0.17;
+          seed.rotation.z += 0.13;
           
           if (t < 1) {
             requestAnimationFrame(animate);
@@ -866,7 +1058,7 @@
       }
       
       updateSeeds();
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 120));
       
       for (let i = 0; i < movingSeeds.length; i++) {
         const seed = movingSeeds[i];
@@ -890,7 +1082,7 @@
         boardGroup.remove(seed);
         updateSeeds();
         
-        await new Promise(resolve => setTimeout(resolve, 150));
+        await new Promise(resolve => setTimeout(resolve, 140));
       }
       
       let cap = 0, count = 0, j = idx;
@@ -915,7 +1107,7 @@
             updateSeeds();
             
             const captureStart = Date.now();
-            const captureDuration = 500;
+            const captureDuration = 480;
             
             await new Promise(resolve => {
               function animateCapture() {
@@ -925,8 +1117,9 @@
                 capturingSeeds.forEach((seed, i) => {
                   const scale = 1 - progress;
                   seed.scale.set(scale, scale, scale);
-                  seed.position.y += 0.1;
-                  seed.rotation.y += 0.3;
+                  seed.position.y += 0.12;
+                  seed.rotation.y += 0.35;
+                  seed.rotation.x += 0.25;
                 });
                 
                 if (progress < 1) {
@@ -939,7 +1132,7 @@
               animateCapture();
             });
             
-            await new Promise(resolve => setTimeout(resolve, 200));
+            await new Promise(resolve => setTimeout(resolve, 180));
             
             count++;
             j = (j - 1 + 12) % 12;
@@ -986,7 +1179,12 @@
     function handleWinner(idx, message, isTie = false) {
       clearTimer();
       playWinSound();
-      confetti({ particleCount: 400, spread: 120, origin: { y: 0.6 } });
+      confetti({ 
+        particleCount: 500, 
+        spread: 140, 
+        origin: { y: 0.6 },
+        colors: ['#FFD700', '#FFA500', '#FF6347', '#FF69B4', '#00CED1']
+      });
       
       let s1 = scores[0], s2 = scores[1];
       let final = message + `\nScore final: ${s1}-${s2}`;
@@ -1004,4 +1202,4 @@
     initThree();
   </script>
 </body>
-    </html>
+</html>
