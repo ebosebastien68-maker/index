@@ -10,7 +10,7 @@
       width: 100%; 
       height: 100%; 
       font-family: 'Papyrus', 'Brush Script MT', cursive; 
-      background: linear-gradient(135deg, #2c1810 0%, #4a3426 50%, #6b4e3d 100%);
+      background: radial-gradient(circle at center, #3a2a1a 0%, #2a1a10 50%, #1a0f08 100%);
       overflow: hidden;
       touch-action: none;
     }
@@ -32,13 +32,13 @@
     
     #landing, #game-ui {
       position: absolute;
-      background: linear-gradient(145deg, rgba(245, 230, 211, 0.95) 0%, rgba(232, 213, 183, 0.95) 100%);
+      background: linear-gradient(145deg, rgba(245, 230, 211, 0.98) 0%, rgba(232, 213, 183, 0.98) 100%);
       padding: 30px;
       border-radius: 20px;
-      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8), inset 0 2px 5px rgba(255, 255, 255, 0.3);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), inset 0 2px 5px rgba(255, 255, 255, 0.4);
       border: 5px solid #8b5e3c;
       pointer-events: all;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
     }
     
     #landing {
@@ -76,9 +76,7 @@
       font-weight: bold;
     }
     
-    .input-group { 
-      margin-bottom: 15px; 
-    }
+    .input-group { margin-bottom: 15px; }
     
     input[type="text"], select, input[type="range"] { 
       width: 100%; 
@@ -121,9 +119,7 @@
       box-shadow: 0 8px 25px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255, 255, 255, 0.4);
     }
     
-    button:active {
-      transform: scale(0.98);
-    }
+    button:active { transform: scale(0.98); }
     
     #info { 
       font-size: 18px; 
@@ -204,53 +200,47 @@
       button { padding: 12px; font-size: 16px; }
     }
     
-    @media (orientation: portrait) and (max-width: 768px) {
-      body::before {
-        content: "🔄 Veuillez tourner votre appareil en mode paysage pour une meilleure expérience";
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(0, 0, 0, 0.9);
-        color: white;
-        padding: 30px;
-        border-radius: 15px;
-        text-align: center;
-        z-index: 10000;
-        font-size: 18px;
-        max-width: 80%;
-        line-height: 1.6;
-      }
-    }
-    
-    .turn-indicator {
+    .online-indicator {
       position: absolute;
-      font-size: 100px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #00ff00, #00cc00);
+      box-shadow: 
+        0 0 20px rgba(0, 255, 0, 0.8),
+        0 0 40px rgba(0, 255, 0, 0.5),
+        inset 0 2px 10px rgba(255, 255, 255, 0.5);
       pointer-events: none;
       z-index: 100;
-      animation: pointPulse 1.5s ease-in-out infinite;
-      filter: drop-shadow(4px 4px 8px rgba(0,0,0,0.6));
+      animation: onlinePulse 2s ease-in-out infinite;
+      border: 4px solid rgba(255, 255, 255, 0.9);
       transition: all 0.5s ease;
     }
     
-    .turn-indicator.player1 {
-      bottom: 50%;
-      right: 3%;
-      transform: translateY(50%) rotate(0deg);
+    .online-indicator.player1 {
+      bottom: 48%;
+      left: 2%;
     }
     
-    .turn-indicator.player2 {
-      top: 50%;
-      right: 3%;
-      transform: translateY(-50%) rotate(180deg);
+    .online-indicator.player2 {
+      top: 48%;
+      left: 2%;
     }
     
-    @keyframes pointPulse {
+    @keyframes onlinePulse {
       0%, 100% { 
-        filter: drop-shadow(4px 4px 8px rgba(0,0,0,0.6));
+        transform: scale(1);
+        box-shadow: 
+          0 0 20px rgba(0, 255, 0, 0.8),
+          0 0 40px rgba(0, 255, 0, 0.5),
+          inset 0 2px 10px rgba(255, 255, 255, 0.5);
       }
       50% { 
-        filter: drop-shadow(6px 6px 12px rgba(255,165,0,0.9));
+        transform: scale(1.15);
+        box-shadow: 
+          0 0 30px rgba(0, 255, 0, 1),
+          0 0 60px rgba(0, 255, 0, 0.7),
+          inset 0 2px 10px rgba(255, 255, 255, 0.7);
       }
     }
     
@@ -314,7 +304,7 @@
       <button id="restartBtn">Recommencer</button>
     </div>
     
-    <div id="turnIndicator" class="turn-indicator hidden">☝️</div>
+    <div id="onlineIndicator" class="online-indicator hidden"></div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -327,7 +317,6 @@
     let timerEnabled, timerDuration, timerId;
     let animating = false;
     let longPressTimer = null;
-    let longPressTarget = null;
     
     const landing = document.getElementById('landing');
     const gameUI = document.getElementById('game-ui');
@@ -340,27 +329,23 @@
     const delayRange = document.getElementById('delayRange');
     const delayValue = document.getElementById('delayValue');
     const collectRuleSel = document.getElementById('collectRule');
-    const turnIndicator = document.getElementById('turnIndicator');
+    const onlineIndicator = document.getElementById('onlineIndicator');
     
     const parcours = [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [0, 5], [0, 4], [0, 3], [0, 2], [0, 1], [0, 0]];
 
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     
     function playSound(freq, duration, type = 'sine', volume = 0.3) {
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-      
-      oscillator.frequency.value = freq;
-      oscillator.type = type;
-      
-      gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
-      
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + duration);
+      const osc = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      osc.connect(gain);
+      gain.connect(audioContext.destination);
+      osc.frequency.value = freq;
+      osc.type = type;
+      gain.gain.setValueAtTime(volume, audioContext.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+      osc.start();
+      osc.stop(audioContext.currentTime + duration);
     }
     
     function playClickSound() { playSound(900, 0.08, 'sine', 0.25); }
@@ -368,7 +353,6 @@
     function playCaptureSound() {
       playSound(650, 0.18, 'square', 0.25);
       setTimeout(() => playSound(750, 0.15, 'square', 0.2), 40);
-      setTimeout(() => playSound(850, 0.12, 'sine', 0.18), 80);
     }
     function playWinSound() {
       playSound(523, 0.2, 'sine', 0.3);
@@ -396,63 +380,57 @@
 
     function initThree() {
       scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x1a1410);
+      scene.background = new THREE.Color(0x0a0503);
       
       const aspect = window.innerWidth / window.innerHeight;
-      camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 1000);
+      camera = new THREE.PerspectiveCamera(42, aspect, 0.1, 1000);
       
       if (aspect < 1.2) {
-        camera.position.set(0, 18, 18);
-        camera.fov = 55;
+        camera.position.set(0, 20, 20);
+        camera.fov = 50;
       } else {
-        camera.position.set(0, 15, 16);
-        camera.fov = 45;
+        camera.position.set(0, 16, 18);
+        camera.fov = 42;
       }
       camera.updateProjectionMatrix();
       camera.lookAt(0, 0, 0);
       
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       renderer.physicallyCorrectLights = true;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.3;
+      renderer.toneMappingExposure = 1.4;
       document.getElementById('canvas-container').appendChild(renderer.domElement);
       
-      const ambientLight = new THREE.AmbientLight(0xfff8f0, 2.5);
+      const ambientLight = new THREE.AmbientLight(0xfff8f0, 3.0);
       scene.add(ambientLight);
       
-      const mainLight = new THREE.DirectionalLight(0xfff5e6, 3.5);
-      mainLight.position.set(12, 30, 15);
+      const mainLight = new THREE.DirectionalLight(0xfff5e6, 4.0);
+      mainLight.position.set(15, 35, 18);
       mainLight.castShadow = true;
-      mainLight.shadow.mapSize.width = 4096;
-      mainLight.shadow.mapSize.height = 4096;
-      mainLight.shadow.camera.left = -35;
-      mainLight.shadow.camera.right = 35;
-      mainLight.shadow.camera.top = 35;
-      mainLight.shadow.camera.bottom = -35;
-      mainLight.shadow.bias = -0.0002;
-      mainLight.shadow.radius = 3;
+      mainLight.shadow.mapSize.width = 2048;
+      mainLight.shadow.mapSize.height = 2048;
+      mainLight.shadow.camera.left = -40;
+      mainLight.shadow.camera.right = 40;
+      mainLight.shadow.camera.top = 40;
+      mainLight.shadow.camera.bottom = -40;
+      mainLight.shadow.bias = -0.0001;
       scene.add(mainLight);
       
-      const fillLight1 = new THREE.PointLight(0xfff8f0, 2.5, 50);
-      fillLight1.position.set(-10, 8, -5);
+      const fillLight1 = new THREE.PointLight(0xffffff, 3.0, 60);
+      fillLight1.position.set(-12, 10, -6);
       scene.add(fillLight1);
       
-      const fillLight2 = new THREE.PointLight(0xfff8f0, 2.5, 50);
-      fillLight2.position.set(10, 8, 5);
+      const fillLight2 = new THREE.PointLight(0xffffff, 3.0, 60);
+      fillLight2.position.set(12, 10, 6);
       scene.add(fillLight2);
       
-      const spotLight1 = new THREE.SpotLight(0xffffff, 1.8, 50, Math.PI / 6, 0.3, 1);
-      spotLight1.position.set(0, 20, 0);
-      spotLight1.target.position.set(0, 0, 0);
-      scene.add(spotLight1);
-      scene.add(spotLight1.target);
-      
-      const hemiLight = new THREE.HemisphereLight(0xffffff, 0x6b4e3d, 1.2);
-      scene.add(hemiLight);
+      const spotLight = new THREE.SpotLight(0xffffff, 2.5, 60, Math.PI / 5, 0.2, 1);
+      spotLight.position.set(0, 25, 0);
+      scene.add(spotLight);
       
       raycaster = new THREE.Raycaster();
       mouse = new THREE.Vector2();
@@ -469,175 +447,134 @@
       animate3D();
     }
 
-    function createWoodTexture() {
-      const canvas = document.createElement('canvas');
-      canvas.width = 2048;
-      canvas.height = 2048;
-      const ctx = canvas.getContext('2d');
-      
-      const gradient = ctx.createLinearGradient(0, 0, 2048, 2048);
-      gradient.addColorStop(0, '#8B4513');
-      gradient.addColorStop(0.3, '#A0522D');
-      gradient.addColorStop(0.6, '#8B6914');
-      gradient.addColorStop(1, '#654321');
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, 2048, 2048);
-      
-      for (let i = 0; i < 300; i++) {
-        ctx.strokeStyle = `rgba(${20 + Math.random() * 40}, ${10 + Math.random() * 20}, ${5 + Math.random() * 15}, ${0.15 + Math.random() * 0.35})`;
-        ctx.lineWidth = 0.8 + Math.random() * 3;
-        ctx.beginPath();
-        const startX = Math.random() * 2048;
-        ctx.moveTo(startX, 0);
-        
-        for (let j = 0; j < 12; j++) {
-          const cpX = startX + (Math.random() - 0.5) * 600;
-          const cpY = j * 200 + (Math.random() - 0.5) * 150;
-          const endX = startX + (Math.random() - 0.5) * 700;
-          const endY = (j + 1) * 200;
-          ctx.quadraticCurveTo(cpX, cpY, endX, endY);
-        }
-        ctx.stroke();
-      }
-      
-      for (let i = 0; i < 50; i++) {
-        const x = Math.random() * 2048;
-        const y = Math.random() * 2048;
-        const radius = 30 + Math.random() * 60;
-        
-        for (let ring = 8; ring > 0; ring--) {
-          const grad = ctx.createRadialGradient(x, y, 0, x, y, radius * ring / 8);
-          grad.addColorStop(0, `rgba(40, 25, 15, ${0.25 * ring / 8})`);
-          grad.addColorStop(1, 'rgba(40, 25, 15, 0)');
-          ctx.fillStyle = grad;
-          ctx.beginPath();
-          ctx.arc(x, y, radius * ring / 8, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-      
-      for (let i = 0; i < 15000; i++) {
-        const x = Math.random() * 2048;
-        const y = Math.random() * 2048;
-        ctx.fillStyle = `rgba(${50 + Math.random() * 50}, ${30 + Math.random() * 30}, ${15 + Math.random() * 20}, ${0.05 + Math.random() * 0.15})`;
-        ctx.fillRect(x, y, 1 + Math.random() * 2, 0.6 + Math.random() * 1);
-      }
-      
-      const glossGrad = ctx.createLinearGradient(0, 0, 2048, 2048);
-      glossGrad.addColorStop(0, 'rgba(255, 255, 255, 0.12)');
-      glossGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.05)');
-      glossGrad.addColorStop(1, 'rgba(255, 255, 255, 0.12)');
-      ctx.fillStyle = glossGrad;
-      ctx.fillRect(0, 0, 2048, 2048);
-      
-      const texture = new THREE.Texture(canvas);
-      texture.needsUpdate = true;
-      texture.wrapS = THREE.RepeatWrapping;
-      texture.wrapT = THREE.RepeatWrapping;
-      return texture;
-    }
-
     function createBoard() {
       boardGroup = new THREE.Group();
       
-      const boardWidth = 22;
-      const boardDepth = 10;
-      const boardHeight = 2;
-      const borderHeight = 1.8;
-      const borderThickness = 1.2;
+      const boardWidth = 25;
+      const boardDepth = 11;
+      const boardHeight = 2.5;
       
-      const woodTexture = createWoodTexture();
+      // Table en dessous du plateau
+      const tableGeometry = new THREE.BoxGeometry(35, 1.5, 20);
+      const tableMaterial = new THREE.MeshStandardMaterial({
+        color: 0x3d2817,
+        roughness: 0.5,
+        metalness: 0.1
+      });
+      const table = new THREE.Mesh(tableGeometry, tableMaterial);
+      table.position.y = -boardHeight - 2;
+      table.receiveShadow = true;
+      scene.add(table);
       
-      const baseGeometry = new THREE.BoxGeometry(boardWidth, 0.8, boardDepth);
-      const baseMaterial = new THREE.MeshStandardMaterial({
-        map: woodTexture,
-        color: 0x8B4513,
+      // Pieds de table
+      const legGeometry = new THREE.CylinderGeometry(0.5, 0.6, 8, 16);
+      const legMaterial = new THREE.MeshStandardMaterial({
+        color: 0x2d1810,
         roughness: 0.6,
-        metalness: 0.1,
-        envMapIntensity: 0.6
+        metalness: 0.1
+      });
+      
+      const legPositions = [
+        [-14, -boardHeight - 6, -8],
+        [14, -boardHeight - 6, -8],
+        [-14, -boardHeight - 6, 8],
+        [14, -boardHeight - 6, 8]
+      ];
+      
+      legPositions.forEach(pos => {
+        const leg = new THREE.Mesh(legGeometry, legMaterial);
+        leg.position.set(...pos);
+        leg.castShadow = true;
+        scene.add(leg);
+      });
+      
+      // Base du plateau
+      const baseGeometry = new THREE.BoxGeometry(boardWidth, 1.0, boardDepth);
+      const baseMaterial = new THREE.MeshStandardMaterial({
+        color: 0x6b4423,
+        roughness: 0.5,
+        metalness: 0.15
       });
       const base = new THREE.Mesh(baseGeometry, baseMaterial);
-      base.position.y = -boardHeight / 2 - 0.4;
+      base.position.y = -boardHeight / 2 - 0.5;
       base.receiveShadow = true;
       base.castShadow = true;
       boardGroup.add(base);
       
-      const innerGeometry = new THREE.BoxGeometry(
-        boardWidth - borderThickness * 2,
-        0.6,
-        boardDepth - borderThickness * 2
-      );
+      // Surface intérieure claire
+      const innerGeometry = new THREE.BoxGeometry(boardWidth - 2.4, 0.8, boardDepth - 2.4);
       const innerMaterial = new THREE.MeshStandardMaterial({
-        color: 0xD2B48C,
-        roughness: 0.4,
-        metalness: 0.15,
-        emissive: 0xD2B48C,
-        emissiveIntensity: 0.25,
-        clearcoat: 0.4,
-        clearcoatRoughness: 0.3
+        color: 0xE8D5B5,
+        roughness: 0.3,
+        metalness: 0.2,
+        emissive: 0xE8D5B5,
+        emissiveIntensity: 0.3
       });
       const inner = new THREE.Mesh(innerGeometry, innerMaterial);
-      inner.position.y = -boardHeight / 2 + 0.6;
+      inner.position.y = -boardHeight / 2 + 0.8;
       inner.receiveShadow = true;
       boardGroup.add(inner);
       
+      // Bordures
       const borderMaterial = new THREE.MeshStandardMaterial({
-        map: woodTexture,
-        color: 0x654321,
-        roughness: 0.65,
-        metalness: 0.12,
-        clearcoat: 0.5,
-        clearcoatRoughness: 0.2
+        color: 0x4a3420,
+        roughness: 0.55,
+        metalness: 0.2
       });
       
+      const borderThickness = 1.2;
+      const borderHeight = 2.2;
+      
+      // Bordure haute
       const topBorder = new THREE.Mesh(
         new THREE.BoxGeometry(boardWidth, borderHeight, borderThickness),
         borderMaterial
       );
       topBorder.position.set(0, -boardHeight / 2 + borderHeight / 2, -boardDepth / 2 + borderThickness / 2);
       topBorder.castShadow = true;
-      topBorder.receiveShadow = true;
       boardGroup.add(topBorder);
       
+      // Bordure basse
       const bottomBorder = new THREE.Mesh(
         new THREE.BoxGeometry(boardWidth, borderHeight, borderThickness),
         borderMaterial
       );
       bottomBorder.position.set(0, -boardHeight / 2 + borderHeight / 2, boardDepth / 2 - borderThickness / 2);
       bottomBorder.castShadow = true;
-      bottomBorder.receiveShadow = true;
       boardGroup.add(bottomBorder);
       
+      // Bordure gauche
       const leftBorder = new THREE.Mesh(
         new THREE.BoxGeometry(borderThickness, borderHeight, boardDepth),
         borderMaterial
       );
       leftBorder.position.set(-boardWidth / 2 + borderThickness / 2, -boardHeight / 2 + borderHeight / 2, 0);
       leftBorder.castShadow = true;
-      leftBorder.receiveShadow = true;
       boardGroup.add(leftBorder);
       
+      // Bordure droite
       const rightBorder = new THREE.Mesh(
         new THREE.BoxGeometry(borderThickness, borderHeight, boardDepth),
         borderMaterial
       );
       rightBorder.position.set(boardWidth / 2 - borderThickness / 2, -boardHeight / 2 + borderHeight / 2, 0);
       rightBorder.castShadow = true;
-      rightBorder.receiveShadow = true;
       boardGroup.add(rightBorder);
       
-      createHinge(-8.5, 0);
-      createHinge(8.5, 0);
+      // Charnières
+      createHinge(-10, 0);
+      createHinge(10, 0);
       
+      // Trous ultra-profonds
       holeObjects = [];
-      const holeRadius = 1.35;
-      const holeDepth = 1.8;
-      const spacingX = 3.3;
-      const spacingZ = 4;
+      const holeRadius = 1.4;
+      const holeDepth = 2.5;
+      const spacingX = 3.6;
+      const spacingZ = 4.5;
       
       for (let r = 0; r < 2; r++) {
         for (let c = 0; c < 6; c++) {
-          const x = -8.25 + c * spacingX;
+          const x = -9 + c * spacingX;
           const z = r === 0 ? -spacingZ / 2 : spacingZ / 2;
           
           const holeGroup = createHole(x, z, holeRadius, holeDepth, r, c);
@@ -650,52 +587,27 @@
     }
 
     function createHinge(x, z) {
-      const hingeGeometry = new THREE.BoxGeometry(0.8, 0.35, 1.5);
       const metalMaterial = new THREE.MeshStandardMaterial({
-        color: 0x2c2c2c,
+        color: 0x1a1a1a,
         metalness: 1.0,
-        roughness: 0.1,
-        envMapIntensity: 2.0
+        roughness: 0.08
       });
-      const hinge = new THREE.Mesh(hingeGeometry, metalMaterial);
-      hinge.position.set(x, 0.7, z);
+      
+      const hinge = new THREE.Mesh(
+        new THREE.BoxGeometry(0.9, 0.4, 1.6),
+        metalMaterial
+      );
+      hinge.position.set(x, 0.8, z);
       hinge.castShadow = true;
       boardGroup.add(hinge);
       
       const axis = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.12, 0.12, 1.6, 24),
+        new THREE.CylinderGeometry(0.15, 0.15, 1.7, 24),
         metalMaterial
       );
-      axis.position.set(x, 0.85, z);
+      axis.position.set(x, 1.0, z);
       axis.rotation.x = Math.PI / 2;
       boardGroup.add(axis);
-      
-      const screwMaterial = new THREE.MeshStandardMaterial({ 
-        color: 0x0a0a0a, 
-        metalness: 1.0, 
-        roughness: 0.12 
-      });
-      
-      const positions = [[x - 0.3, z - 0.6], [x + 0.3, z - 0.6], [x - 0.3, z + 0.6], [x + 0.3, z + 0.6]];
-      positions.forEach(([px, pz]) => {
-        const screw = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.12, 0.12, 0.15, 20),
-          screwMaterial
-        );
-        screw.position.set(px, 0.9, pz);
-        screw.rotation.x = Math.PI / 2;
-        boardGroup.add(screw);
-        
-        const slotGeometry = new THREE.BoxGeometry(0.18, 0.025, 0.025);
-        const slot1 = new THREE.Mesh(slotGeometry, screwMaterial);
-        slot1.position.set(px, 0.98, pz);
-        boardGroup.add(slot1);
-        
-        const slot2 = new THREE.Mesh(slotGeometry, screwMaterial);
-        slot2.position.set(px, 0.98, pz);
-        slot2.rotation.y = Math.PI / 2;
-        boardGroup.add(slot2);
-      });
     }
 
     function createHole(x, z, radius, depth, row, col) {
@@ -703,78 +615,75 @@
       holeGroup.position.set(x, 0, z);
       holeGroup.userData = { row, col, isHole: true };
       
-      const holeGeometry = new THREE.CylinderGeometry(radius, radius * 0.88, depth, 64);
+      // Parois du trou ultra-sombres
+      const holeGeometry = new THREE.CylinderGeometry(radius, radius * 0.85, depth, 64);
       const holeMaterial = new THREE.MeshStandardMaterial({
-        color: 0x2d1810,
-        roughness: 0.85,
-        metalness: 0.02,
-        emissive: 0x1a0a05,
-        emissiveIntensity: 0.08
+        color: 0x1a0f08,
+        roughness: 0.9,
+        metalness: 0.0
       });
       const hole = new THREE.Mesh(holeGeometry, holeMaterial);
-      hole.position.y = -depth / 2 + 0.6;
+      hole.position.y = -depth / 2 + 0.8;
       hole.receiveShadow = true;
       holeGroup.add(hole);
       
-      const bottomGeometry = new THREE.CircleGeometry(radius * 0.88, 64);
+      // Fond noir profond
+      const bottomGeometry = new THREE.CircleGeometry(radius * 0.85, 64);
       const bottomMaterial = new THREE.MeshStandardMaterial({
-        color: 0x1a0f08,
-        roughness: 0.95,
-        metalness: 0.0,
-        emissive: 0x0a0503,
-        emissiveIntensity: 0.03
+        color: 0x0a0503,
+        roughness: 1.0
       });
       const bottom = new THREE.Mesh(bottomGeometry, bottomMaterial);
       bottom.rotation.x = -Math.PI / 2;
-      bottom.position.y = -depth + 0.6;
+      bottom.position.y = -depth + 0.8;
       bottom.receiveShadow = true;
       holeGroup.add(bottom);
       
-      const ringGeometry = new THREE.TorusGeometry(radius, 0.22, 36, 64);
+      // Bordure brillante
+      const ringGeometry = new THREE.TorusGeometry(radius, 0.25, 40, 64);
       const ringMaterial = new THREE.MeshStandardMaterial({
-        color: 0x5C4033,
-        roughness: 0.25,
-        metalness: 0.35,
-        clearcoat: 0.9,
-        clearcoatRoughness: 0.08
+        color: 0x8B6914,
+        roughness: 0.15,
+        metalness: 0.5,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.05
       });
       const ring = new THREE.Mesh(ringGeometry, ringMaterial);
       ring.rotation.x = Math.PI / 2;
-      ring.position.y = 0.6;
+      ring.position.y = 0.8;
       ring.castShadow = true;
-      ring.receiveShadow = true;
       holeGroup.add(ring);
       
       return holeGroup;
     }
 
+    // Générateur de graines uniques
+    const seedPatterns = [
+      { colors: [0xFFD700, 0xFFE55C], scale: [1, 0.9, 1.1], spots: 8 },
+      { colors: [0xFFA500, 0xFFBF3F], scale: [1.05, 0.88, 1.08], spots: 6 },
+      { colors: [0xFF8C00, 0xFFA433], scale: [0.98, 0.92, 1.12], spots: 10 },
+      { colors: [0xF4A460, 0xF7BC7D], scale: [1.02, 0.9, 1.1], spots: 7 },
+      { colors: [0xDAA520, 0xE6B84D], scale: [1, 0.87, 1.15], spots: 9 },
+      { colors: [0xFFB347, 0xFFC46B], scale: [1.03, 0.91, 1.09], spots: 5 },
+      { colors: [0xFF7F50, 0xFF9A7A], scale: [0.99, 0.89, 1.13], spots: 8 },
+      { colors: [0xFFA07A, 0xFFB599], scale: [1.01, 0.93, 1.07], spots: 6 }
+    ];
+
     function createSeed(x, y, z) {
       const seedGroup = new THREE.Group();
+      const pattern = seedPatterns[Math.floor(Math.random() * seedPatterns.length)];
       
-      const seedGeometry = new THREE.SphereGeometry(0.38, 48, 48);
-      seedGeometry.scale(1, 0.9, 1.1);
-      
-      const seedColors = [
-        { base: 0xFFD700, light: 0xFFE55C },
-        { base: 0xFFA500, light: 0xFFBF3F },
-        { base: 0xFF8C00, light: 0xFFA433 },
-        { base: 0xF4A460, light: 0xF7BC7D },
-        { base: 0xDAA520, light: 0xE6B84D },
-        { base: 0xFFB347, light: 0xFFC46B },
-        { base: 0xFF7F50, light: 0xFF9A7A },
-        { base: 0xFFA07A, light: 0xFFB599 }
-      ];
-      
-      const colorPair = seedColors[Math.floor(Math.random() * seedColors.length)];
+      const seedGeometry = new THREE.SphereGeometry(0.40, 48, 48);
+      seedGeometry.scale(...pattern.scale);
       
       const seedMaterial = new THREE.MeshStandardMaterial({
-        color: colorPair.base,
-        roughness: 0.2,
-        metalness: 0.4,
-        emissive: colorPair.light,
-        emissiveIntensity: 0.6,
-        clearcoat: 0.8,
-        clearcoatRoughness: 0.15
+        color: pattern.colors[0],
+        roughness: 0.15,
+        metalness: 0.5,
+        emissive: pattern.colors[1],
+        emissiveIntensity: 0.7,
+        clearcoat: 0.9,
+        clearcoatRoughness: 0.1
       });
       
       const seed = new THREE.Mesh(seedGeometry, seedMaterial);
@@ -787,28 +696,28 @@
       
       seedGroup.add(seed);
       
-      const glowLight = new THREE.PointLight(colorPair.light, 0.8, 2);
-      glowLight.position.set(0, 0, 0);
+      // Lumière personnalisée pour chaque graine
+      const glowLight = new THREE.PointLight(pattern.colors[1], 1.2, 2.5);
       seedGroup.add(glowLight);
       
       seedGroup.position.set(x, y, z);
+      seedGroup.userData = { pattern: pattern };
       
       return seedGroup;
     }
 
     function getHolePosition(row, col) {
-      const x = -8.25 + col * 3.3;
-      const z = row === 0 ? -2 : 2;
+      const x = -9 + col * 3.6;
+      const z = row === 0 ? -2.25 : 2.25;
       return { x, z };
     }
 
     function positionSeedsInHole(row, col, count) {
       const seeds = [];
       const pos = getHolePosition(row, col);
+      const baseY = 1.8;
       
       if (count === 0) return seeds;
-      
-      const baseY = 1.2;
       
       for (let i = 0; i < count; i++) {
         let sx, sz, sy;
@@ -819,7 +728,7 @@
           sy = baseY;
         } else if (count <= 4) {
           const angle = (i / count) * Math.PI * 2 + Math.PI / 4;
-          const radius = 0.48;
+          const radius = 0.52;
           sx = pos.x + Math.cos(angle) * radius;
           sz = pos.z + Math.sin(angle) * radius;
           sy = baseY;
@@ -827,18 +736,18 @@
           const layer = Math.floor(i / 4);
           const posInLayer = i % 4;
           const angle = (posInLayer / 4) * Math.PI * 2 + Math.PI / 4;
-          const radius = layer === 0 ? 0.52 : 0.28;
+          const radius = layer === 0 ? 0.58 : 0.32;
           sx = pos.x + Math.cos(angle) * radius;
           sz = pos.z + Math.sin(angle) * radius;
-          sy = baseY + layer * 0.45;
+          sy = baseY + layer * 0.5;
         } else {
           const layer = Math.floor(i / 6);
           const posInLayer = i % 6;
           const angle = (posInLayer / 6) * Math.PI * 2;
-          const radius = 0.38 + (layer % 2) * 0.28;
+          const radius = 0.42 + (layer % 2) * 0.32;
           sx = pos.x + Math.cos(angle) * radius;
           sz = pos.z + Math.sin(angle) * radius;
-          sy = baseY + layer * 0.42;
+          sy = baseY + layer * 0.48;
         }
         
         seeds.push({ x: sx, y: sy, z: sz });
@@ -869,8 +778,9 @@
       requestAnimationFrame(animate3D);
       
       seedObjects.forEach((seed, i) => {
-        seed.children[0].rotation.y += 0.004 * Math.sin(i * 0.3);
-        seed.position.y += Math.sin(Date.now() * 0.0012 + i * 0.6) * 0.0012;
+        const mainSeed = seed.children[0];
+        mainSeed.rotation.y += 0.005 * Math.sin(i * 0.3);
+        seed.position.y += Math.sin(Date.now() * 0.0015 + i * 0.7) * 0.0015;
       });
       
       renderer.render(scene, camera);
@@ -881,14 +791,14 @@
       camera.aspect = aspect;
       
       if (aspect < 1.2) {
-        camera.fov = 55;
-        camera.position.set(0, 18, 18);
-      } else if (aspect < 1.5) {
         camera.fov = 50;
-        camera.position.set(0, 16, 17);
+        camera.position.set(0, 20, 20);
+      } else if (aspect < 1.5) {
+        camera.fov = 46;
+        camera.position.set(0, 18, 19);
       } else {
-        camera.fov = 45;
-        camera.position.set(0, 15, 16);
+        camera.fov = 42;
+        camera.position.set(0, 16, 18);
       }
       
       camera.updateProjectionMatrix();
@@ -918,7 +828,6 @@
         }
         
         if (hole.userData.isHole) {
-          longPressTarget = hole;
           longPressTimer = setTimeout(() => {
             showSeedCount(hole, touch.clientX, touch.clientY);
           }, 500);
@@ -968,7 +877,6 @@
       }
       
       touchStartPos = null;
-      longPressTarget = null;
     }
     
     function showSeedCount(hole, x, y) {
@@ -999,8 +907,8 @@
       holeObjects.forEach(hole => {
         hole.children.forEach(child => {
           if (child.material && child.material.emissive) {
-            child.material.emissive.setHex(child.material.color.getHex());
-            child.material.emissiveIntensity = child === hole.children[1] ? 0.03 : 0.08;
+            child.material.emissive.setHex(0x000000);
+            child.material.emissiveIntensity = 0;
           }
         });
       });
@@ -1017,12 +925,8 @@
           
           if ((currentPlayer === 1 && r === 1) || (currentPlayer === 2 && r === 0)) {
             if (board[r][c] > 0) {
-              hole.children.forEach(child => {
-                if (child.material && child.material.emissive) {
-                  child.material.emissive.setHex(0xff6600);
-                  child.material.emissiveIntensity = 0.8;
-                }
-              });
+              hole.children[2].material.emissive.setHex(0xff6600);
+              hole.children[2].material.emissiveIntensity = 0.8;
               renderer.domElement.style.cursor = 'pointer';
               return;
             }
@@ -1048,7 +952,6 @@
         }
         
         if (hole.userData.isHole) {
-          longPressTarget = hole;
           longPressTimer = setTimeout(() => {
             showSeedCount(hole, event.clientX, event.clientY);
           }, 500);
@@ -1056,7 +959,7 @@
       }
     }
     
-    function onMouseUp(event) {
+    function onMouseUp() {
       if (longPressTimer) {
         clearTimeout(longPressTimer);
         longPressTimer = null;
@@ -1064,8 +967,6 @@
       
       const tooltip = document.querySelector('.seed-count-tooltip');
       if (tooltip) tooltip.remove();
-      
-      longPressTarget = null;
     }
 
     function onMouseClick(event) {
@@ -1131,14 +1032,14 @@
       p2ScoreEl.textContent = `${pNames[1]}: ${scores[1]}`;
       info.textContent = `Tour de ${pNames[currentPlayer - 1]}`;
       
-      turnIndicator.classList.remove('hidden', 'player1', 'player2');
-      turnIndicator.classList.add(currentPlayer === 1 ? 'player1' : 'player2');
+      onlineIndicator.classList.remove('hidden', 'player1', 'player2');
+      onlineIndicator.classList.add(currentPlayer === 1 ? 'player1' : 'player2');
       
       startTimer();
     }
 
     async function animateSeedMovement(seed, startPos, endPos) {
-      const duration = 700;
+      const duration = 650;
       const startTime = Date.now();
       
       return new Promise(resolve => {
@@ -1148,14 +1049,14 @@
           
           const easeT = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
           
-          const height = 4.2;
+          const height = 4.5;
           seed.position.x = startPos.x + (endPos.x - startPos.x) * easeT;
           seed.position.z = startPos.z + (endPos.z - startPos.z) * easeT;
           seed.position.y = startPos.y + Math.sin(easeT * Math.PI) * height;
           
-          seed.children[0].rotation.x += 0.22;
-          seed.children[0].rotation.y += 0.19;
-          seed.children[0].rotation.z += 0.15;
+          seed.children[0].rotation.x += 0.25;
+          seed.children[0].rotation.y += 0.22;
+          seed.children[0].rotation.z += 0.18;
           
           if (t < 1) {
             requestAnimationFrame(animate);
@@ -1217,7 +1118,7 @@
         boardGroup.remove(seed);
         updateSeeds();
         
-        await new Promise(resolve => setTimeout(resolve, 160));
+        await new Promise(resolve => setTimeout(resolve, 140));
       }
       
       let cap = 0, count = 0, j = idx;
@@ -1242,19 +1143,19 @@
             updateSeeds();
             
             const captureStart = Date.now();
-            const captureDuration = 500;
+            const captureDuration = 480;
             
             await new Promise(resolve => {
               function animateCapture() {
                 const elapsed = Date.now() - captureStart;
                 const progress = Math.min(elapsed / captureDuration, 1);
                 
-                capturingSeeds.forEach((seed, i) => {
+                capturingSeeds.forEach(seed => {
                   const scale = 1 - progress;
                   seed.scale.set(scale, scale, scale);
-                  seed.position.y += 0.15;
-                  seed.children[0].rotation.y += 0.4;
-                  seed.children[0].rotation.x += 0.3;
+                  seed.position.y += 0.18;
+                  seed.children[0].rotation.y += 0.45;
+                  seed.children[0].rotation.x += 0.35;
                 });
                 
                 if (progress < 1) {
@@ -1267,7 +1168,7 @@
               animateCapture();
             });
             
-            await new Promise(resolve => setTimeout(resolve, 200));
+            await new Promise(resolve => setTimeout(resolve, 180));
             
             count++;
             j = (j - 1 + 12) % 12;
@@ -1315,10 +1216,10 @@
       clearTimer();
       playWinSound();
       confetti({ 
-        particleCount: 600, 
-        spread: 160, 
+        particleCount: 700, 
+        spread: 170, 
         origin: { y: 0.6 },
-        colors: ['#FFD700', '#FFA500', '#FF6347', '#FF69B4', '#00CED1', '#7FFF00']
+        colors: ['#FFD700', '#FFA500', '#FF6347', '#FF69B4', '#00CED1', '#7FFF00', '#FF1493']
       });
       
       let s1 = scores[0], s2 = scores[1];
@@ -1337,4 +1238,4 @@
     initThree();
   </script>
 </body>
-  </html>
+</html>
