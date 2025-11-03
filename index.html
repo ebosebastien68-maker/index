@@ -10,7 +10,7 @@
       width: 100%; 
       height: 100%; 
       font-family: 'Papyrus', 'Brush Script MT', cursive; 
-      background: radial-gradient(circle at center, #3a2a1a 0%, #2a1a10 50%, #1a0f08 100%);
+      background: linear-gradient(135deg, #f5e6d3 0%, #e8d5b7 100%);
       overflow: hidden;
       touch-action: none;
     }
@@ -35,10 +35,10 @@
       background: linear-gradient(145deg, rgba(245, 230, 211, 0.98) 0%, rgba(232, 213, 183, 0.98) 100%);
       padding: 30px;
       border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), inset 0 2px 5px rgba(255, 255, 255, 0.4);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), inset 0 2px 5px rgba(255, 255, 255, 0.4);
       border: 5px solid #8b5e3c;
       pointer-events: all;
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(10px);
     }
     
     #landing {
@@ -55,9 +55,8 @@
       right: 0;
       transform: none;
       width: 100%;
-      max-width: 100%;
       text-align: center;
-      padding: 10px 20px;
+      padding: 12px 20px;
       border-radius: 0 0 15px 15px;
       display: flex;
       align-items: center;
@@ -71,7 +70,7 @@
       margin-bottom: 25px; 
       color: #3d2817;
       font-size: 3em;
-      text-shadow: 3px 3px 6px rgba(0,0,0,0.4), 0 0 20px rgba(139, 94, 60, 0.5);
+      text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
       letter-spacing: 10px;
       font-weight: bold;
     }
@@ -85,7 +84,6 @@
       border: 3px solid #8b5e3c;
       border-radius: 8px;
       background: #fff;
-      font-family: 'Segoe UI', sans-serif;
       font-size: 14px;
     }
     
@@ -95,7 +93,6 @@
       margin-top: 10px;
       color: #5a3e1b;
       font-weight: bold;
-      text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
     }
     
     button { 
@@ -109,48 +106,28 @@
       border-radius: 10px; 
       cursor: pointer;
       font-weight: bold;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255, 255, 255, 0.3);
-      transition: transform 0.2s, box-shadow 0.2s;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
     }
     
-    button:hover { 
-      transform: scale(1.05);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255, 255, 255, 0.4);
-    }
-    
+    button:hover { transform: scale(1.05); }
     button:active { transform: scale(0.98); }
     
-    #info { 
-      font-size: 18px; 
+    #info, #timer, #scores { 
+      font-size: 16px; 
       margin: 0;
       color: #3d2817;
       font-weight: bold;
-      text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
       flex: 1;
-      min-width: 150px;
+      min-width: 120px;
     }
     
-    #timer { 
-      font-size: 16px; 
-      color: #e74c3c; 
-      margin: 0;
-      font-weight: bold;
-      text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
-      min-width: 100px;
-    }
+    #timer { color: #e74c3c; }
     
     #scores { 
       display: flex; 
       justify-content: center;
       gap: 30px;
-      margin: 0;
-      font-size: 16px;
-      color: #3d2817;
-      font-weight: bold;
-      text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
-      flex: 1;
-      min-width: 200px;
     }
     
     #restartBtn { 
@@ -158,7 +135,7 @@
       padding: 8px 20px;
       margin: 0;
       width: auto;
-      min-width: 120px;
+      min-width: 100px;
     }
     
     .btn-chambre-reception {
@@ -172,96 +149,86 @@
       text-decoration: none;
       color: white;
       border-radius: 10px;
-      transition: all 0.3s ease;
       cursor: pointer;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
       background: linear-gradient(45deg, #FF6B6B, #F06595, #6C5CE7, #48A9A6);
       background-size: 400% 400%;
       animation: gradient-animation 10s ease infinite;
     }
     
-    .btn-chambre-reception:hover {
-      transform: scale(1.05);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-    }
-    
     @keyframes gradient-animation {
-      0% { background-position: 0% 50%; }
+      0%, 100% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
     }
 
     .hidden { display: none !important; }
     
-    @media (max-width: 600px) {
-      h1 { font-size: 2.2em; letter-spacing: 6px; }
-      #landing { padding: 20px; }
-      #game-ui { padding: 15px; min-width: 280px; }
-      button { padding: 12px; font-size: 16px; }
-    }
-    
     .online-indicator {
       position: absolute;
-      width: 50px;
-      height: 50px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, #00ff00, #00cc00);
-      box-shadow: 
-        0 0 20px rgba(0, 255, 0, 0.8),
-        0 0 40px rgba(0, 255, 0, 0.5),
-        inset 0 2px 10px rgba(255, 255, 255, 0.5);
+      background: radial-gradient(circle at 35% 35%, #00ff00, #00cc00);
+      box-shadow: 0 0 12px rgba(0, 255, 0, 0.8), 0 0 24px rgba(0, 255, 0, 0.4);
       pointer-events: none;
       z-index: 100;
-      animation: onlinePulse 2s ease-in-out infinite;
-      border: 4px solid rgba(255, 255, 255, 0.9);
-      transition: all 0.5s ease;
+      animation: pulse 2s ease-in-out infinite;
+      border: 2.5px solid rgba(255, 255, 255, 0.95);
     }
     
     .online-indicator.player1 {
-      bottom: 48%;
-      left: 2%;
+      bottom: 50%;
+      right: 6%;
+      transform: translateY(50%);
     }
     
     .online-indicator.player2 {
-      top: 48%;
-      left: 2%;
+      top: 50%;
+      right: 6%;
+      transform: translateY(-50%);
     }
     
-    @keyframes onlinePulse {
+    @keyframes pulse {
       0%, 100% { 
-        transform: scale(1);
-        box-shadow: 
-          0 0 20px rgba(0, 255, 0, 0.8),
-          0 0 40px rgba(0, 255, 0, 0.5),
-          inset 0 2px 10px rgba(255, 255, 255, 0.5);
+        transform: translateY(50%) scale(1);
+        box-shadow: 0 0 12px rgba(0, 255, 0, 0.8), 0 0 24px rgba(0, 255, 0, 0.4);
       }
       50% { 
-        transform: scale(1.15);
-        box-shadow: 
-          0 0 30px rgba(0, 255, 0, 1),
-          0 0 60px rgba(0, 255, 0, 0.7),
-          inset 0 2px 10px rgba(255, 255, 255, 0.7);
+        transform: translateY(50%) scale(1.12);
+        box-shadow: 0 0 18px rgba(0, 255, 0, 1), 0 0 36px rgba(0, 255, 0, 0.6);
+      }
+    }
+    
+    .online-indicator.player2 {
+      animation: pulse2 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse2 {
+      0%, 100% { 
+        transform: translateY(-50%) scale(1);
+        box-shadow: 0 0 12px rgba(0, 255, 0, 0.8), 0 0 24px rgba(0, 255, 0, 0.4);
+      }
+      50% { 
+        transform: translateY(-50%) scale(1.12);
+        box-shadow: 0 0 18px rgba(0, 255, 0, 1), 0 0 36px rgba(0, 255, 0, 0.6);
       }
     }
     
     .seed-count-tooltip {
       position: absolute;
-      background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(30, 20, 10, 0.95));
+      background: rgba(0, 0, 0, 0.92);
       color: #FFD700;
-      padding: 15px 25px;
-      border-radius: 12px;
-      font-size: 32px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 28px;
       font-weight: bold;
       pointer-events: none;
       z-index: 1000;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.7);
-      border: 3px solid #FFD700;
-      animation: tooltipAppear 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      border: 2.5px solid #FFD700;
     }
     
-    @keyframes tooltipAppear {
-      from { opacity: 0; transform: scale(0.8); }
-      to { opacity: 1; transform: scale(1); }
+    @media (max-width: 600px) {
+      h1 { font-size: 2.2em; letter-spacing: 6px; }
     }
   </style>
 </head>
@@ -318,119 +285,93 @@
     let animating = false;
     let longPressTimer = null;
     
-    const landing = document.getElementById('landing');
-    const gameUI = document.getElementById('game-ui');
-    const startBtn = document.getElementById('startBtn');
-    const restartBtn = document.getElementById('restartBtn');
-    const info = document.getElementById('info');
-    const timerEl = document.getElementById('timer');
-    const p1ScoreEl = document.getElementById('p1Score');
-    const p2ScoreEl = document.getElementById('p2Score');
-    const delayRange = document.getElementById('delayRange');
-    const delayValue = document.getElementById('delayValue');
-    const collectRuleSel = document.getElementById('collectRule');
-    const onlineIndicator = document.getElementById('onlineIndicator');
+    const $ = id => document.getElementById(id);
+    const landing = $('landing');
+    const gameUI = $('game-ui');
+    const onlineIndicator = $('onlineIndicator');
     
-    const parcours = [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [0, 5], [0, 4], [0, 3], [0, 2], [0, 1], [0, 0]];
+    const parcours = [[1,0],[1,1],[1,2],[1,3],[1,4],[1,5],[0,5],[0,4],[0,3],[0,2],[0,1],[0,0]];
 
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     
-    function playSound(freq, duration, type = 'sine', volume = 0.3) {
-      const osc = audioContext.createOscillator();
-      const gain = audioContext.createGain();
-      osc.connect(gain);
-      gain.connect(audioContext.destination);
-      osc.frequency.value = freq;
-      osc.type = type;
-      gain.gain.setValueAtTime(volume, audioContext.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
-      osc.start();
-      osc.stop(audioContext.currentTime + duration);
+    function playSound(freq, dur, type = 'sine', vol = 0.25) {
+      const o = audioContext.createOscillator();
+      const g = audioContext.createGain();
+      o.connect(g);
+      g.connect(audioContext.destination);
+      o.frequency.value = freq;
+      o.type = type;
+      g.gain.setValueAtTime(vol, audioContext.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + dur);
+      o.start();
+      o.stop(audioContext.currentTime + dur);
     }
     
-    function playClickSound() { playSound(900, 0.08, 'sine', 0.25); }
-    function playDropSound() { playSound(450, 0.12, 'triangle', 0.2); }
-    function playCaptureSound() {
-      playSound(650, 0.18, 'square', 0.25);
-      setTimeout(() => playSound(750, 0.15, 'square', 0.2), 40);
-    }
-    function playWinSound() {
-      playSound(523, 0.2, 'sine', 0.3);
-      setTimeout(() => playSound(659, 0.2, 'sine', 0.3), 120);
-      setTimeout(() => playSound(784, 0.35, 'sine', 0.35), 240);
-    }
+    $('delayRange').oninput = () => $('delayValue').textContent = $('delayRange').value;
 
-    delayRange.oninput = () => delayValue.textContent = delayRange.value;
-
-    startBtn.onclick = () => {
-      playClickSound();
-      pNames = [document.getElementById('player1').value || 'Joueur 1', document.getElementById('player2').value || 'Joueur 2'];
-      collectRule = collectRuleSel.value;
-      timerEnabled = document.getElementById('enableTimer').checked;
-      timerDuration = parseInt(delayRange.value);
+    $('startBtn').onclick = () => {
+      playSound(900, 0.08);
+      pNames = [$('player1').value || 'Joueur 1', $('player2').value || 'Joueur 2'];
+      collectRule = $('collectRule').value;
+      timerEnabled = $('enableTimer').checked;
+      timerDuration = parseInt($('delayRange').value);
       landing.classList.add('hidden');
       gameUI.classList.remove('hidden');
       initGame();
     };
 
-    restartBtn.onclick = () => {
-      playClickSound();
+    $('restartBtn').onclick = () => {
+      playSound(900, 0.08);
       initGame();
     };
 
     function initThree() {
       scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x0a0503);
+      scene.background = new THREE.Color(0xf5e6d3);
       
       const aspect = window.innerWidth / window.innerHeight;
-      camera = new THREE.PerspectiveCamera(42, aspect, 0.1, 1000);
+      camera = new THREE.PerspectiveCamera(32, aspect, 0.1, 1000);
       
       if (aspect < 1.2) {
-        camera.position.set(0, 20, 20);
-        camera.fov = 50;
+        camera.position.set(0, 11, 13);
+        camera.fov = 36;
       } else {
-        camera.position.set(0, 16, 18);
-        camera.fov = 42;
+        camera.position.set(0, 9, 11);
+        camera.fov = 32;
       }
       camera.updateProjectionMatrix();
       camera.lookAt(0, 0, 0);
       
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
       renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-      renderer.physicallyCorrectLights = true;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.4;
-      document.getElementById('canvas-container').appendChild(renderer.domElement);
+      renderer.toneMappingExposure = 1.2;
+      $('canvas-container').appendChild(renderer.domElement);
       
-      const ambientLight = new THREE.AmbientLight(0xfff8f0, 3.0);
+      const ambientLight = new THREE.AmbientLight(0xffffff, 2.5);
       scene.add(ambientLight);
       
-      const mainLight = new THREE.DirectionalLight(0xfff5e6, 4.0);
-      mainLight.position.set(15, 35, 18);
+      const mainLight = new THREE.DirectionalLight(0xfff5e6, 3.5);
+      mainLight.position.set(12, 28, 15);
       mainLight.castShadow = true;
-      mainLight.shadow.mapSize.width = 2048;
-      mainLight.shadow.mapSize.height = 2048;
-      mainLight.shadow.camera.left = -40;
-      mainLight.shadow.camera.right = 40;
-      mainLight.shadow.camera.top = 40;
-      mainLight.shadow.camera.bottom = -40;
-      mainLight.shadow.bias = -0.0001;
+      mainLight.shadow.mapSize.width = 1024;
+      mainLight.shadow.mapSize.height = 1024;
+      mainLight.shadow.camera.left = -30;
+      mainLight.shadow.camera.right = 30;
+      mainLight.shadow.camera.top = 30;
+      mainLight.shadow.camera.bottom = -30;
       scene.add(mainLight);
       
-      const fillLight1 = new THREE.PointLight(0xffffff, 3.0, 60);
-      fillLight1.position.set(-12, 10, -6);
+      const fillLight1 = new THREE.PointLight(0xffffff, 2.5, 50);
+      fillLight1.position.set(-10, 8, -5);
       scene.add(fillLight1);
       
-      const fillLight2 = new THREE.PointLight(0xffffff, 3.0, 60);
-      fillLight2.position.set(12, 10, 6);
+      const fillLight2 = new THREE.PointLight(0xffffff, 2.5, 50);
+      fillLight2.position.set(10, 8, 5);
       scene.add(fillLight2);
-      
-      const spotLight = new THREE.SpotLight(0xffffff, 2.5, 60, Math.PI / 5, 0.2, 1);
-      spotLight.position.set(0, 25, 0);
-      scene.add(spotLight);
       
       raycaster = new THREE.Raycaster();
       mouse = new THREE.Vector2();
@@ -447,136 +388,142 @@
       animate3D();
     }
 
+    function createWoodTexture() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1024;
+      canvas.height = 1024;
+      const ctx = canvas.getContext('2d');
+      
+      // Base bois acajou comme l'image
+      const gradient = ctx.createLinearGradient(0, 0, 1024, 1024);
+      gradient.addColorStop(0, '#A67C52');
+      gradient.addColorStop(0.5, '#8B6239');
+      gradient.addColorStop(1, '#6F4E37');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 1024, 1024);
+      
+      // Veines bois
+      for (let i = 0; i < 120; i++) {
+        ctx.strokeStyle = `rgba(${30 + Math.random() * 30}, ${15 + Math.random() * 15}, ${10 + Math.random() * 10}, ${0.15 + Math.random() * 0.25})`;
+        ctx.lineWidth = 0.5 + Math.random() * 2;
+        ctx.beginPath();
+        const x = Math.random() * 1024;
+        ctx.moveTo(x, 0);
+        for (let j = 0; j < 8; j++) {
+          ctx.quadraticCurveTo(x + (Math.random() - 0.5) * 300, j * 150, x + (Math.random() - 0.5) * 350, (j + 1) * 150);
+        }
+        ctx.stroke();
+      }
+      
+      // Nœuds
+      for (let i = 0; i < 25; i++) {
+        const x = Math.random() * 1024;
+        const y = Math.random() * 1024;
+        const r = 15 + Math.random() * 30;
+        for (let ring = 5; ring > 0; ring--) {
+          const grad = ctx.createRadialGradient(x, y, 0, x, y, r * ring / 5);
+          grad.addColorStop(0, `rgba(40, 25, 15, ${0.2 * ring / 5})`);
+          grad.addColorStop(1, 'rgba(40, 25, 15, 0)');
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(x, y, r * ring / 5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      
+      const texture = new THREE.Texture(canvas);
+      texture.needsUpdate = true;
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      return texture;
+    }
+
     function createBoard() {
       boardGroup = new THREE.Group();
       
-      const boardWidth = 25;
-      const boardDepth = 11;
-      const boardHeight = 2.5;
+      const woodTexture = createWoodTexture();
+      const boardWidth = 24;
+      const boardDepth = 10.5;
+      const boardHeight = 2.2;
       
-      // Table en dessous du plateau
-      const tableGeometry = new THREE.BoxGeometry(35, 1.5, 20);
-      const tableMaterial = new THREE.MeshStandardMaterial({
-        color: 0x3d2817,
-        roughness: 0.5,
-        metalness: 0.1
-      });
-      const table = new THREE.Mesh(tableGeometry, tableMaterial);
-      table.position.y = -boardHeight - 2;
-      table.receiveShadow = true;
-      scene.add(table);
-      
-      // Pieds de table
-      const legGeometry = new THREE.CylinderGeometry(0.5, 0.6, 8, 16);
-      const legMaterial = new THREE.MeshStandardMaterial({
-        color: 0x2d1810,
-        roughness: 0.6,
-        metalness: 0.1
-      });
-      
-      const legPositions = [
-        [-14, -boardHeight - 6, -8],
-        [14, -boardHeight - 6, -8],
-        [-14, -boardHeight - 6, 8],
-        [14, -boardHeight - 6, 8]
-      ];
-      
-      legPositions.forEach(pos => {
-        const leg = new THREE.Mesh(legGeometry, legMaterial);
-        leg.position.set(...pos);
-        leg.castShadow = true;
-        scene.add(leg);
-      });
-      
-      // Base du plateau
-      const baseGeometry = new THREE.BoxGeometry(boardWidth, 1.0, boardDepth);
+      // Base du plateau en bois massif
+      const baseGeometry = new THREE.BoxGeometry(boardWidth, 0.9, boardDepth);
       const baseMaterial = new THREE.MeshStandardMaterial({
-        color: 0x6b4423,
+        map: woodTexture,
+        color: 0x8B6239,
         roughness: 0.5,
-        metalness: 0.15
+        metalness: 0.12
       });
       const base = new THREE.Mesh(baseGeometry, baseMaterial);
-      base.position.y = -boardHeight / 2 - 0.5;
+      base.position.y = -boardHeight / 2 - 0.45;
       base.receiveShadow = true;
       base.castShadow = true;
       boardGroup.add(base);
       
-      // Surface intérieure claire
-      const innerGeometry = new THREE.BoxGeometry(boardWidth - 2.4, 0.8, boardDepth - 2.4);
+      // Surface intérieure papyrus clair
+      const innerGeometry = new THREE.BoxGeometry(boardWidth - 2.4, 0.7, boardDepth - 2.4);
       const innerMaterial = new THREE.MeshStandardMaterial({
-        color: 0xE8D5B5,
-        roughness: 0.3,
-        metalness: 0.2,
-        emissive: 0xE8D5B5,
-        emissiveIntensity: 0.3
+        color: 0xF0E5D3,
+        roughness: 0.4,
+        metalness: 0.15,
+        emissive: 0xF0E5D3,
+        emissiveIntensity: 0.2
       });
       const inner = new THREE.Mesh(innerGeometry, innerMaterial);
-      inner.position.y = -boardHeight / 2 + 0.8;
+      inner.position.y = -boardHeight / 2 + 0.7;
       inner.receiveShadow = true;
       boardGroup.add(inner);
       
-      // Bordures
+      // Bordures en bois
       const borderMaterial = new THREE.MeshStandardMaterial({
-        color: 0x4a3420,
-        roughness: 0.55,
-        metalness: 0.2
+        map: woodTexture,
+        color: 0x6F4E37,
+        roughness: 0.5,
+        metalness: 0.15
       });
       
       const borderThickness = 1.2;
-      const borderHeight = 2.2;
+      const borderHeight = 2.0;
       
-      // Bordure haute
-      const topBorder = new THREE.Mesh(
-        new THREE.BoxGeometry(boardWidth, borderHeight, borderThickness),
-        borderMaterial
-      );
-      topBorder.position.set(0, -boardHeight / 2 + borderHeight / 2, -boardDepth / 2 + borderThickness / 2);
-      topBorder.castShadow = true;
-      boardGroup.add(topBorder);
+      const borders = [
+        { pos: [0, -boardHeight/2 + borderHeight/2, -boardDepth/2 + borderThickness/2], size: [boardWidth, borderHeight, borderThickness] },
+        { pos: [0, -boardHeight/2 + borderHeight/2, boardDepth/2 - borderThickness/2], size: [boardWidth, borderHeight, borderThickness] },
+        { pos: [-boardWidth/2 + borderThickness/2, -boardHeight/2 + borderHeight/2, 0], size: [borderThickness, borderHeight, boardDepth] },
+        { pos: [boardWidth/2 - borderThickness/2, -boardHeight/2 + borderHeight/2, 0], size: [borderThickness, borderHeight, boardDepth] }
+      ];
       
-      // Bordure basse
-      const bottomBorder = new THREE.Mesh(
-        new THREE.BoxGeometry(boardWidth, borderHeight, borderThickness),
-        borderMaterial
-      );
-      bottomBorder.position.set(0, -boardHeight / 2 + borderHeight / 2, boardDepth / 2 - borderThickness / 2);
-      bottomBorder.castShadow = true;
-      boardGroup.add(bottomBorder);
+      borders.forEach(b => {
+        const border = new THREE.Mesh(new THREE.BoxGeometry(...b.size), borderMaterial);
+        border.position.set(...b.pos);
+        border.castShadow = true;
+        boardGroup.add(border);
+      });
       
-      // Bordure gauche
-      const leftBorder = new THREE.Mesh(
-        new THREE.BoxGeometry(borderThickness, borderHeight, boardDepth),
-        borderMaterial
-      );
-      leftBorder.position.set(-boardWidth / 2 + borderThickness / 2, -boardHeight / 2 + borderHeight / 2, 0);
-      leftBorder.castShadow = true;
-      boardGroup.add(leftBorder);
+      // Charnières métalliques
+      [-9.5, 9.5].forEach(x => {
+        const metalMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2a, metalness: 1.0, roughness: 0.1 });
+        const hinge = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.35, 1.5), metalMat);
+        hinge.position.set(x, 0.75, 0);
+        hinge.castShadow = true;
+        boardGroup.add(hinge);
+        
+        const axis = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 1.6, 20), metalMat);
+        axis.position.set(x, 0.92, 0);
+        axis.rotation.x = Math.PI / 2;
+        boardGroup.add(axis);
+      });
       
-      // Bordure droite
-      const rightBorder = new THREE.Mesh(
-        new THREE.BoxGeometry(borderThickness, borderHeight, boardDepth),
-        borderMaterial
-      );
-      rightBorder.position.set(boardWidth / 2 - borderThickness / 2, -boardHeight / 2 + borderHeight / 2, 0);
-      rightBorder.castShadow = true;
-      boardGroup.add(rightBorder);
-      
-      // Charnières
-      createHinge(-10, 0);
-      createHinge(10, 0);
-      
-      // Trous ultra-profonds
+      // Trous creusés dans le bois
       holeObjects = [];
-      const holeRadius = 1.4;
-      const holeDepth = 2.5;
-      const spacingX = 3.6;
-      const spacingZ = 4.5;
+      const holeRadius = 1.35;
+      const holeDepth = 2.3;
+      const spacingX = 3.5;
+      const spacingZ = 4.2;
       
       for (let r = 0; r < 2; r++) {
         for (let c = 0; c < 6; c++) {
-          const x = -9 + c * spacingX;
+          const x = -8.75 + c * spacingX;
           const z = r === 0 ? -spacingZ / 2 : spacingZ / 2;
-          
           const holeGroup = createHole(x, z, holeRadius, holeDepth, r, c);
           boardGroup.add(holeGroup);
           holeObjects.push(holeGroup);
@@ -586,173 +533,137 @@
       scene.add(boardGroup);
     }
 
-    function createHinge(x, z) {
-      const metalMaterial = new THREE.MeshStandardMaterial({
-        color: 0x1a1a1a,
-        metalness: 1.0,
-        roughness: 0.08
-      });
-      
-      const hinge = new THREE.Mesh(
-        new THREE.BoxGeometry(0.9, 0.4, 1.6),
-        metalMaterial
-      );
-      hinge.position.set(x, 0.8, z);
-      hinge.castShadow = true;
-      boardGroup.add(hinge);
-      
-      const axis = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.15, 0.15, 1.7, 24),
-        metalMaterial
-      );
-      axis.position.set(x, 1.0, z);
-      axis.rotation.x = Math.PI / 2;
-      boardGroup.add(axis);
-    }
-
     function createHole(x, z, radius, depth, row, col) {
       const holeGroup = new THREE.Group();
       holeGroup.position.set(x, 0, z);
       holeGroup.userData = { row, col, isHole: true };
       
-      // Parois du trou ultra-sombres
-      const holeGeometry = new THREE.CylinderGeometry(radius, radius * 0.85, depth, 64);
+      // Parois du trou bois sombre
+      const holeGeometry = new THREE.CylinderGeometry(radius, radius * 0.87, depth, 48);
       const holeMaterial = new THREE.MeshStandardMaterial({
-        color: 0x1a0f08,
-        roughness: 0.9,
-        metalness: 0.0
+        color: 0x4A3420,
+        roughness: 0.85,
+        metalness: 0.05
       });
       const hole = new THREE.Mesh(holeGeometry, holeMaterial);
-      hole.position.y = -depth / 2 + 0.8;
+      hole.position.y = -depth / 2 + 0.7;
       hole.receiveShadow = true;
       holeGroup.add(hole);
       
-      // Fond noir profond
-      const bottomGeometry = new THREE.CircleGeometry(radius * 0.85, 64);
+      // Fond du trou marron foncé
+      const bottomGeometry = new THREE.CircleGeometry(radius * 0.87, 48);
       const bottomMaterial = new THREE.MeshStandardMaterial({
-        color: 0x0a0503,
-        roughness: 1.0
+        color: 0x3A2815,
+        roughness: 0.95
       });
       const bottom = new THREE.Mesh(bottomGeometry, bottomMaterial);
       bottom.rotation.x = -Math.PI / 2;
-      bottom.position.y = -depth + 0.8;
+      bottom.position.y = -depth + 0.7;
       bottom.receiveShadow = true;
       holeGroup.add(bottom);
       
-      // Bordure brillante
-      const ringGeometry = new THREE.TorusGeometry(radius, 0.25, 40, 64);
+      // Bordure dorée brillante
+      const ringGeometry = new THREE.TorusGeometry(radius, 0.22, 32, 48);
       const ringMaterial = new THREE.MeshStandardMaterial({
-        color: 0x8B6914,
-        roughness: 0.15,
-        metalness: 0.5,
-        clearcoat: 1.0,
-        clearcoatRoughness: 0.05
+        color: 0x9B7653,
+        roughness: 0.2,
+        metalness: 0.4,
+        clearcoat: 0.9,
+        clearcoatRoughness: 0.1
       });
       const ring = new THREE.Mesh(ringGeometry, ringMaterial);
       ring.rotation.x = Math.PI / 2;
-      ring.position.y = 0.8;
+      ring.position.y = 0.7;
       ring.castShadow = true;
       holeGroup.add(ring);
       
       return holeGroup;
     }
 
-    // Générateur de graines uniques
+    // 8 designs uniques de graines
     const seedPatterns = [
-      { colors: [0xFFD700, 0xFFE55C], scale: [1, 0.9, 1.1], spots: 8 },
-      { colors: [0xFFA500, 0xFFBF3F], scale: [1.05, 0.88, 1.08], spots: 6 },
-      { colors: [0xFF8C00, 0xFFA433], scale: [0.98, 0.92, 1.12], spots: 10 },
-      { colors: [0xF4A460, 0xF7BC7D], scale: [1.02, 0.9, 1.1], spots: 7 },
-      { colors: [0xDAA520, 0xE6B84D], scale: [1, 0.87, 1.15], spots: 9 },
-      { colors: [0xFFB347, 0xFFC46B], scale: [1.03, 0.91, 1.09], spots: 5 },
-      { colors: [0xFF7F50, 0xFF9A7A], scale: [0.99, 0.89, 1.13], spots: 8 },
-      { colors: [0xFFA07A, 0xFFB599], scale: [1.01, 0.93, 1.07], spots: 6 }
+      { base: 0xE8D7B5, light: 0xF5E5C8, scale: [1, 0.9, 1.1] },
+      { base: 0xD4C4A0, light: 0xE0D0AC, scale: [1.03, 0.88, 1.08] },
+      { base: 0xC9B896, light: 0xD5C4A2, scale: [0.98, 0.92, 1.12] },
+      { base: 0xBFAE8C, light: 0xCBBA98, scale: [1.02, 0.9, 1.1] },
+      { base: 0xB5A482, light: 0xC1B08E, scale: [1, 0.87, 1.15] },
+      { base: 0xAA9978, light: 0xB6A584, scale: [1.04, 0.91, 1.09] },
+      { base: 0xA08F6E, light: 0xAC9B7A, scale: [0.99, 0.89, 1.13] },
+      { base: 0x968564, light: 0xA29170, scale: [1.01, 0.93, 1.07] }
     ];
 
     function createSeed(x, y, z) {
       const seedGroup = new THREE.Group();
       const pattern = seedPatterns[Math.floor(Math.random() * seedPatterns.length)];
       
-      const seedGeometry = new THREE.SphereGeometry(0.40, 48, 48);
+      const seedGeometry = new THREE.SphereGeometry(0.38, 32, 32);
       seedGeometry.scale(...pattern.scale);
       
       const seedMaterial = new THREE.MeshStandardMaterial({
-        color: pattern.colors[0],
-        roughness: 0.15,
-        metalness: 0.5,
-        emissive: pattern.colors[1],
-        emissiveIntensity: 0.7,
-        clearcoat: 0.9,
-        clearcoatRoughness: 0.1
+        color: pattern.base,
+        roughness: 0.2,
+        metalness: 0.4,
+        emissive: pattern.light,
+        emissiveIntensity: 0.5,
+        clearcoat: 0.8,
+        clearcoatRoughness: 0.15
       });
       
       const seed = new THREE.Mesh(seedGeometry, seedMaterial);
       seed.castShadow = true;
       seed.receiveShadow = true;
-      
-      seed.rotation.x = Math.random() * Math.PI * 2;
-      seed.rotation.y = Math.random() * Math.PI * 2;
-      seed.rotation.z = Math.random() * Math.PI * 2;
-      
+      seed.rotation.set(Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, Math.random() * Math.PI * 2);
       seedGroup.add(seed);
       
-      // Lumière personnalisée pour chaque graine
-      const glowLight = new THREE.PointLight(pattern.colors[1], 1.2, 2.5);
+      const glowLight = new THREE.PointLight(pattern.light, 0.8, 2);
       seedGroup.add(glowLight);
       
       seedGroup.position.set(x, y, z);
-      seedGroup.userData = { pattern: pattern };
-      
       return seedGroup;
     }
 
     function getHolePosition(row, col) {
-      const x = -9 + col * 3.6;
-      const z = row === 0 ? -2.25 : 2.25;
-      return { x, z };
+      return { x: -8.75 + col * 3.5, z: row === 0 ? -2.1 : 2.1 };
     }
 
     function positionSeedsInHole(row, col, count) {
       const seeds = [];
       const pos = getHolePosition(row, col);
-      const baseY = 1.8;
+      const baseY = 1.6;
       
       if (count === 0) return seeds;
       
       for (let i = 0; i < count; i++) {
         let sx, sz, sy;
-        
         if (count === 1) {
           sx = pos.x;
           sz = pos.z;
           sy = baseY;
         } else if (count <= 4) {
-          const angle = (i / count) * Math.PI * 2 + Math.PI / 4;
-          const radius = 0.52;
+          const angle = (i / count) * Math.PI * 2;
+          const radius = 0.5;
           sx = pos.x + Math.cos(angle) * radius;
           sz = pos.z + Math.sin(angle) * radius;
           sy = baseY;
         } else if (count <= 8) {
           const layer = Math.floor(i / 4);
           const posInLayer = i % 4;
-          const angle = (posInLayer / 4) * Math.PI * 2 + Math.PI / 4;
-          const radius = layer === 0 ? 0.58 : 0.32;
+          const angle = (posInLayer / 4) * Math.PI * 2;
+          const radius = layer === 0 ? 0.55 : 0.3;
           sx = pos.x + Math.cos(angle) * radius;
           sz = pos.z + Math.sin(angle) * radius;
-          sy = baseY + layer * 0.5;
+          sy = baseY + layer * 0.48;
         } else {
           const layer = Math.floor(i / 6);
           const posInLayer = i % 6;
           const angle = (posInLayer / 6) * Math.PI * 2;
-          const radius = 0.42 + (layer % 2) * 0.32;
+          const radius = 0.4 + (layer % 2) * 0.3;
           sx = pos.x + Math.cos(angle) * radius;
           sz = pos.z + Math.sin(angle) * radius;
-          sy = baseY + layer * 0.48;
+          sy = baseY + layer * 0.45;
         }
-        
         seeds.push({ x: sx, y: sy, z: sz });
       }
-      
       return seeds;
     }
 
@@ -764,7 +675,6 @@
         for (let c = 0; c < 6; c++) {
           const count = board[r][c];
           const positions = positionSeedsInHole(r, c, count);
-          
           positions.forEach(pos => {
             const seed = createSeed(pos.x, pos.y, pos.z);
             boardGroup.add(seed);
@@ -776,13 +686,10 @@
 
     function animate3D() {
       requestAnimationFrame(animate3D);
-      
       seedObjects.forEach((seed, i) => {
-        const mainSeed = seed.children[0];
-        mainSeed.rotation.y += 0.005 * Math.sin(i * 0.3);
-        seed.position.y += Math.sin(Date.now() * 0.0015 + i * 0.7) * 0.0015;
+        seed.children[0].rotation.y += 0.004;
+        seed.position.y += Math.sin(Date.now() * 0.0012 + i * 0.6) * 0.0012;
       });
-      
       renderer.render(scene, camera);
     }
 
@@ -791,14 +698,14 @@
       camera.aspect = aspect;
       
       if (aspect < 1.2) {
-        camera.fov = 50;
-        camera.position.set(0, 20, 20);
+        camera.fov = 36;
+        camera.position.set(0, 11, 13);
       } else if (aspect < 1.5) {
-        camera.fov = 46;
-        camera.position.set(0, 18, 19);
+        camera.fov = 34;
+        camera.position.set(0, 10, 12);
       } else {
-        camera.fov = 42;
-        camera.position.set(0, 16, 18);
+        camera.fov = 32;
+        camera.position.set(0, 9, 11);
       }
       
       camera.updateProjectionMatrix();
@@ -823,9 +730,7 @@
       
       if (intersects.length > 0) {
         let hole = intersects[0].object;
-        while (hole.parent && !hole.userData.isHole) {
-          hole = hole.parent;
-        }
+        while (hole.parent && !hole.userData.isHole) hole = hole.parent;
         
         if (hole.userData.isHole) {
           longPressTimer = setTimeout(() => {
@@ -858,9 +763,7 @@
         
         if (intersects.length > 0) {
           let hole = intersects[0].object;
-          while (hole.parent && !hole.userData.isHole) {
-            hole = hole.parent;
-          }
+          while (hole.parent && !hole.userData.isHole) hole = hole.parent;
           
           if (hole.userData.isHole) {
             const r = hole.userData.row;
@@ -868,7 +771,7 @@
             
             if ((currentPlayer === 1 && r === 1) || (currentPlayer === 2 && r === 0)) {
               if (board[r][c] > 0) {
-                playClickSound();
+                playSound(900, 0.08);
                 play(r, c);
               }
             }
@@ -888,13 +791,10 @@
       tooltip.className = 'seed-count-tooltip';
       tooltip.textContent = `🌰 ${count}`;
       tooltip.style.left = x + 'px';
-      tooltip.style.top = (y - 70) + 'px';
-      
+      tooltip.style.top = (y - 60) + 'px';
       document.body.appendChild(tooltip);
       
-      if (navigator.vibrate) {
-        navigator.vibrate(50);
-      }
+      if (navigator.vibrate) navigator.vibrate(50);
     }
 
     function onMouseMove(event) {
@@ -905,19 +805,15 @@
       const intersects = raycaster.intersectObjects(holeObjects, true);
       
       holeObjects.forEach(hole => {
-        hole.children.forEach(child => {
-          if (child.material && child.material.emissive) {
-            child.material.emissive.setHex(0x000000);
-            child.material.emissiveIntensity = 0;
-          }
-        });
+        if (hole.children[2]) {
+          hole.children[2].material.emissive.setHex(0x000000);
+          hole.children[2].material.emissiveIntensity = 0;
+        }
       });
       
       if (intersects.length > 0 && !animating) {
         let hole = intersects[0].object;
-        while (hole.parent && !hole.userData.isHole) {
-          hole = hole.parent;
-        }
+        while (hole.parent && !hole.userData.isHole) hole = hole.parent;
         
         if (hole.userData.isHole) {
           const r = hole.userData.row;
@@ -926,7 +822,7 @@
           if ((currentPlayer === 1 && r === 1) || (currentPlayer === 2 && r === 0)) {
             if (board[r][c] > 0) {
               hole.children[2].material.emissive.setHex(0xff6600);
-              hole.children[2].material.emissiveIntensity = 0.8;
+              hole.children[2].material.emissiveIntensity = 0.7;
               renderer.domElement.style.cursor = 'pointer';
               return;
             }
@@ -947,9 +843,7 @@
       
       if (intersects.length > 0) {
         let hole = intersects[0].object;
-        while (hole.parent && !hole.userData.isHole) {
-          hole = hole.parent;
-        }
+        while (hole.parent && !hole.userData.isHole) hole = hole.parent;
         
         if (hole.userData.isHole) {
           longPressTimer = setTimeout(() => {
@@ -964,7 +858,6 @@
         clearTimeout(longPressTimer);
         longPressTimer = null;
       }
-      
       const tooltip = document.querySelector('.seed-count-tooltip');
       if (tooltip) tooltip.remove();
     }
@@ -977,9 +870,7 @@
       
       if (intersects.length > 0) {
         let hole = intersects[0].object;
-        while (hole.parent && !hole.userData.isHole) {
-          hole = hole.parent;
-        }
+        while (hole.parent && !hole.userData.isHole) hole = hole.parent;
         
         if (hole.userData.isHole) {
           const r = hole.userData.row;
@@ -987,7 +878,7 @@
           
           if ((currentPlayer === 1 && r === 1) || (currentPlayer === 2 && r === 0)) {
             if (board[r][c] > 0) {
-              playClickSound();
+              playSound(900, 0.08);
               play(r, c);
             }
           }
@@ -1008,29 +899,28 @@
       clearTimer();
       if (!timerEnabled) return;
       let rem = timerDuration;
-      timerEl.textContent = `Temps: ${rem}s`;
+      $('timer').textContent = `Temps: ${rem}s`;
       timerId = setInterval(() => {
         rem--;
-        timerEl.textContent = `Temps: ${rem}s`;
+        $('timer').textContent = `Temps: ${rem}s`;
         if (rem < 0) {
           clearTimer();
           const loser = currentPlayer;
           const winner = loser === 1 ? 2 : 1;
-          const msg = `Temps écoulé ! ${pNames[loser - 1]} n'a pas joué à temps.\n${pNames[winner - 1]} remporte la partie.`;
-          handleWinner(winner, msg, false);
+          handleWinner(winner, `Temps écoulé ! ${pNames[loser - 1]} n'a pas joué.\n${pNames[winner - 1]} gagne !`, false);
         }
       }, 1000);
     }
 
     function clearTimer() {
       clearInterval(timerId);
-      timerEl.textContent = '';
+      $('timer').textContent = '';
     }
 
     function updateDisplay() {
-      p1ScoreEl.textContent = `${pNames[0]}: ${scores[0]}`;
-      p2ScoreEl.textContent = `${pNames[1]}: ${scores[1]}`;
-      info.textContent = `Tour de ${pNames[currentPlayer - 1]}`;
+      $('p1Score').textContent = `${pNames[0]}: ${scores[0]}`;
+      $('p2Score').textContent = `${pNames[1]}: ${scores[1]}`;
+      $('info').textContent = `Tour de ${pNames[currentPlayer - 1]}`;
       
       onlineIndicator.classList.remove('hidden', 'player1', 'player2');
       onlineIndicator.classList.add(currentPlayer === 1 ? 'player1' : 'player2');
@@ -1039,24 +929,21 @@
     }
 
     async function animateSeedMovement(seed, startPos, endPos) {
-      const duration = 650;
+      const duration = 550;
       const startTime = Date.now();
       
       return new Promise(resolve => {
         function animate() {
           const elapsed = Date.now() - startTime;
           const t = Math.min(elapsed / duration, 1);
-          
           const easeT = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
           
-          const height = 4.5;
           seed.position.x = startPos.x + (endPos.x - startPos.x) * easeT;
           seed.position.z = startPos.z + (endPos.z - startPos.z) * easeT;
-          seed.position.y = startPos.y + Math.sin(easeT * Math.PI) * height;
+          seed.position.y = startPos.y + Math.sin(easeT * Math.PI) * 4;
           
-          seed.children[0].rotation.x += 0.25;
-          seed.children[0].rotation.y += 0.22;
-          seed.children[0].rotation.z += 0.18;
+          seed.children[0].rotation.x += 0.22;
+          seed.children[0].rotation.y += 0.2;
           
           if (t < 1) {
             requestAnimationFrame(animate);
@@ -1094,7 +981,7 @@
       }
       
       updateSeeds();
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 100));
       
       for (let i = 0; i < movingSeeds.length; i++) {
         const seed = movingSeeds[i];
@@ -1112,13 +999,13 @@
         const endPositions = positionSeedsInHole(r, c, board[r][c]);
         const endPos = endPositions[endPositions.length - 1];
         
-        playDropSound();
+        playSound(450, 0.1, 'triangle', 0.2);
         await animateSeedMovement(seed, startPos, endPos);
         
         boardGroup.remove(seed);
         updateSeeds();
         
-        await new Promise(resolve => setTimeout(resolve, 140));
+        await new Promise(resolve => setTimeout(resolve, 100));
       }
       
       let cap = 0, count = 0, j = idx;
@@ -1128,7 +1015,7 @@
           let v = board[r][c];
           if (v === 2 || v === 3) {
             cap += v;
-            playCaptureSound();
+            playSound(650, 0.15, 'square', 0.25);
             
             const capturePositions = positionSeedsInHole(r, c, v);
             const capturingSeeds = [];
@@ -1143,7 +1030,7 @@
             updateSeeds();
             
             const captureStart = Date.now();
-            const captureDuration = 480;
+            const captureDuration = 400;
             
             await new Promise(resolve => {
               function animateCapture() {
@@ -1153,9 +1040,8 @@
                 capturingSeeds.forEach(seed => {
                   const scale = 1 - progress;
                   seed.scale.set(scale, scale, scale);
-                  seed.position.y += 0.18;
-                  seed.children[0].rotation.y += 0.45;
-                  seed.children[0].rotation.x += 0.35;
+                  seed.position.y += 0.15;
+                  seed.children[0].rotation.y += 0.4;
                 });
                 
                 if (progress < 1) {
@@ -1168,7 +1054,7 @@
               animateCapture();
             });
             
-            await new Promise(resolve => setTimeout(resolve, 180));
+            await new Promise(resolve => setTimeout(resolve, 120));
             
             count++;
             j = (j - 1 + 12) % 12;
@@ -1214,12 +1100,15 @@
 
     function handleWinner(idx, message, isTie = false) {
       clearTimer();
-      playWinSound();
+      playSound(523, 0.2, 'sine', 0.3);
+      setTimeout(() => playSound(659, 0.2, 'sine', 0.3), 120);
+      setTimeout(() => playSound(784, 0.3, 'sine', 0.35), 240);
+      
       confetti({ 
-        particleCount: 700, 
-        spread: 170, 
+        particleCount: 600, 
+        spread: 160, 
         origin: { y: 0.6 },
-        colors: ['#FFD700', '#FFA500', '#FF6347', '#FF69B4', '#00CED1', '#7FFF00', '#FF1493']
+        colors: ['#FFD700', '#FFA500', '#FF6347', '#FF69B4', '#00CED1', '#7FFF00']
       });
       
       let s1 = scores[0], s2 = scores[1];
@@ -1228,14 +1117,14 @@
       if (isTie) {
         final += `\nRecommence dans 2s.`;
         timerDuration = Math.max(3, timerDuration - 1);
-        info.textContent = final;
+        $('info').textContent = final;
         setTimeout(initGame, 2000);
       } else {
-        info.textContent = final;
+        $('info').textContent = final;
       }
     }
 
     initThree();
   </script>
 </body>
-</html>
+  </html>
