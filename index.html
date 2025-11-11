@@ -380,17 +380,17 @@
             <h3>Ce livre contient :</h3>
             <div class="book-details">📖 567 pages d'images et de formules puissantes</div>
             <div class="book-details">✨ Plus de 500 formules et incantations secrètes</div>
-            <div class="price">48000 FCFA</div>
-            <button class="buy-button" onclick="openIframe()">
+            <div class="price">250 000 FCFA</div>
+            <a href="https://wa.me/22955337775?text=Bonjour%2C%20je%20suis%20int%C3%A9ress%C3%A9%20par%20le%20Grimoire%20Ultime%20des%20Pouvoirs%20%C3%A0%20250%20000%20FCFA" target="_blank" class="buy-button">
                 <span class="emoji">✨</span> Acheter <span class="emoji">✨</span>
-            </button>
+            </a>
             <p style="margin-top: 1.5rem; font-size: 1.1rem; color: #d4af37;">
                 Ne manquez pas cette occasion de découvrir les secrets les plus puissants pour transformer votre vie ! <span class="emoji">😊</span>
             </p>
         </div>
     </div>
 
-    <div id="iframe-overlay">
+    <div id="iframe-overlay" style="display: none;">
         <div class="iframe-container">
             <button class="close-button" onclick="closeIframe()">✕ Fermer</button>
             <iframe id="purchase-iframe" src=""></iframe>
@@ -493,23 +493,6 @@
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
-
-        // Iframe functions
-        function openIframe() {
-            const overlay = document.getElementById('iframe-overlay');
-            const iframe = document.getElementById('purchase-iframe');
-            iframe.src = 'xkiu3jjk2367gughjki.html';
-            overlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeIframe() {
-            const overlay = document.getElementById('iframe-overlay');
-            const iframe = document.getElementById('purchase-iframe');
-            overlay.classList.remove('active');
-            iframe.src = '';
-            document.body.style.overflow = 'auto';
-        }
     </script>
 </body>
-  </html>
+    </html>
