@@ -1,43 +1,779 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <title>Test téléchargement public</title>
-  <style>body{font-family:Arial;margin:40px;text-align:center}button{padding:12px 20px;font-size:16px}</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Félicitations - Le Grimoire Ultime 🎉</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            background: #000;
+            color: #fff;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Navigation moderne */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 0;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 5px 0;
+        }
+
+        .nav-link:hover {
+            color: #ffd700;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #ffd700;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-link.active {
+            color: #ffd700;
+        }
+
+        /* Contenu principal */
+        .content {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            padding-top: 100px;
+        }
+
+        /* Section Hero */
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 90vh;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 6em;
+            margin-bottom: 20px;
+            animation: successPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes successPop {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .main-title {
+            font-size: 4em;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s ease-in-out infinite;
+            letter-spacing: 2px;
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: brightness(1) drop-shadow(0 0 20px rgba(255, 215, 0, 0.5)); }
+            50% { filter: brightness(1.3) drop-shadow(0 0 30px rgba(255, 215, 0, 0.8)); }
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            margin-bottom: 40px;
+            color: #ffd700;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        /* Card moderne */
+        .card {
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 24px;
+            padding: 50px;
+            max-width: 900px;
+            margin: 40px auto;
+            box-shadow: 0 20px 60px rgba(255, 215, 0, 0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 80px rgba(255, 215, 0, 0.3);
+            border-color: rgba(255, 215, 0, 0.5);
+        }
+
+        .card-title {
+            font-size: 2.5em;
+            color: #ffd700;
+            margin-bottom: 30px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .card-text {
+            font-size: 1.2em;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Grid des pouvoirs */
+        .powers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .power-card {
+            background: rgba(255, 215, 0, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .power-card:hover {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: rgba(255, 215, 0, 0.4);
+            transform: translateY(-3px);
+        }
+
+        .power-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .power-title {
+            font-size: 1.1em;
+            color: #ffd700;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        /* Bouton de téléchargement moderne */
+        .download-section {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 237, 78, 0.05));
+            border: 2px solid #ffd700;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px 0;
+            text-align: center;
+        }
+
+        .download-title {
+            font-size: 2em;
+            color: #ffd700;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #000;
+            border: none;
+            padding: 20px 50px;
+            font-size: 1.3em;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.6);
+        }
+
+        .download-btn:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        .download-btn.downloading {
+            background: linear-gradient(135deg, #888, #aaa);
+            cursor: not-allowed;
+        }
+
+        /* Stats modernes */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 30px;
+            background: rgba(255, 215, 0, 0.05);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .stat-number {
+            font-size: 3em;
+            color: #ffd700;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1em;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        footer {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            margin-top: 80px;
+        }
+
+        .footer-text {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.95em;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 30px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #ffd700;
+            border-radius: 16px;
+            padding: 20px 30px;
+            display: none;
+            align-items: center;
+            gap: 15px;
+            z-index: 2000;
+            animation: slideIn 0.5s ease;
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.3);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .notification.show {
+            display: flex;
+        }
+
+        /* Menu burger pour mobile */
+        .burger-menu {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .burger-line {
+            width: 25px;
+            height: 3px;
+            background: #ffd700;
+            transition: all 0.3s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(0, 0, 0, 0.98);
+                flex-direction: column;
+                padding: 20px;
+                gap: 20px;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .burger-menu {
+                display: flex;
+            }
+
+            .main-title {
+                font-size: 2.5em;
+            }
+
+            .subtitle {
+                font-size: 1.2em;
+            }
+
+            .card {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+
+            .download-btn {
+                padding: 15px 30px;
+                font-size: 1.1em;
+            }
+
+            .powers-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .highlight {
+            color: #ffd700;
+            font-weight: 700;
+        }
+    </style>
 </head>
 <body>
-  <h1>Test téléchargement (bucket public)</h1>
-  <p>Fichier : <strong>pdf_5f2a3b7c9d8e4f1a.pdf</strong> (bucket: ebooks)</p>
-  <button id="dl">Télécharger</button>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">
+                📖 Le Grimoire Ultime
+            </div>
+            <div class="burger-menu" onclick="toggleMenu()">
+                <div class="burger-line"></div>
+                <div class="burger-line"></div>
+                <div class="burger-line"></div>
+            </div>
+            <div class="nav-links" id="navLinks">
+                <a href="#accueil" class="nav-link active">Accueil</a>
+                <a href="#pouvoirs" class="nav-link">Les 12 Pouvoirs</a>
+                <a href="#telechargement" class="nav-link">Téléchargement</a>
+                <a href="#support" class="nav-link">Support</a>
+            </div>
+        </div>
+    </nav>
 
-  <script type="module">
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+    <!-- Three.js Background -->
+    <div id="canvas-container"></div>
 
-    const supabaseUrl = "https://unzbrvdybxwmrdhftgfm.supabase.co";
-    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVuemJydmR5Ynh3bXJkaGZ0Z2ZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM2ODY3MTgsImV4cCI6MjA3OTI2MjcxOH0.SWUuoDpsca8oWFnbQPvvHN1ROqn0wyTJNTKfENzNXys";
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <span style="font-size: 2em;">✅</span>
+        <span id="notificationText">Téléchargement réussi !</span>
+    </div>
+    
+    <!-- Contenu principal -->
+    <div class="content">
+        <!-- Section Hero -->
+        <section class="hero-section" id="accueil">
+            <div class="success-icon">🎉</div>
+            <h1 class="main-title">FÉLICITATIONS !</h1>
+            <p class="subtitle">Votre Paiement a été Confirmé avec Succès</p>
+            
+            <div class="stats-container">
+                <div class="stat-box">
+                    <div class="stat-number">567</div>
+                    <div class="stat-label">Pages de Sagesse</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Formules Secrètes</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">Pouvoirs Mystiques</div>
+                </div>
+            </div>
+        </section>
 
-    document.getElementById('dl').addEventListener('click', async () => {
-      try {
-        const { data, error } = await supabase.storage
-          .from('ebooks')
-          .download('pdf_5f2a3b7c9d8e4f1a.pdf');
+        <!-- Message de bienvenue -->
+        <div class="card">
+            <p class="card-text">
+                <span style="font-size: 1.5em;">✨</span> Cher client, nous sommes honorés de vous accueillir parmi les élus ! <span style="font-size: 1.5em;">✨</span>
+            </p>
+            
+            <p class="card-text">
+                Vous venez d'acquérir <span class="highlight">Le Grimoire Ultime des Pouvoirs</span>, 
+                un trésor spirituel qui va transformer votre vie à jamais.
+            </p>
 
-        if (error) throw error;
+            <p class="card-text">
+                Ce livre spirituel rassemble, pour la toute première fois, les secrets les plus puissants 
+                recueillis dans les parchemins interdits, les grimoires oubliés et les traditions sacrées 
+                des quatre coins du monde.
+            </p>
+        </div>
 
-        const url = URL.createObjectURL(data);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = "Le_Grimoire_Ultime_des_Pouvoirs.pdf";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-      } catch (err) {
-        alert("Erreur: " + (err.message || err));
-        console.error(err);
-      }
-    });
-  </script>
+        <!-- Section des 12 Pouvoirs -->
+        <section id="pouvoirs" style="padding: 40px 20px;">
+            <div class="card">
+                <h2 class="card-title">🌟 Les 12 Pouvoirs Extraordinaires 🌟</h2>
+                
+                <div class="powers-grid">
+                    <div class="power-card">
+                        <div class="power-icon">🔥</div>
+                        <div class="power-title">Le Don d'Invisibilité Absolue</div>
+                    </div>
+                    <div class="power-card">
+                        <div class="power-icon">🌊</div>
+                        <div class="power-title">Le Pouvoir d'Apparaître et Disparaître à Travers l'Espace-Temps</div>
+                    </div>
+                    <div class="power-card">
+                        <div class="power-icon">🐠</div>
+                        <div class="power-title">L'Élixir de l'Immersion Totale</div>
+                    </div>
+                    <div class="power-card">
+                        <div class="power-icon">🛡️</div>
+                        <div class="power-title">Le Bouclier Mystique contre les Bêtes Sauvages</div>
+                    </div>
+                    <div class="power-card">
+                        <div class="power-icon">🔫</div>
+                        <div class="power-title">Le Corps d'Acier : Invulnérable aux Balles et Armes</div>
+                    </div>
+                    <div class="power-card">
+                        <div class="power-icon">🔥</div>
+                        <div class="power-title">Le Secret pour Dompter le Feu</div>
+                    </div>
+                    <div class="power-card">
+                        <div class="power-icon">💸</div>
+                        <div class="power-title">La Clé d'Invocation de l'Argent Illimité</div>
+                    </div>
+                    <div class="power-card">
+                        <div class="power-icon">✈️</div>
+                        <div class="power-title">Le Vol en l'Air</div>
+                    </div>
+                    <div class="power-card">
+                        <div class="power-icon">🪬</div>
+                        <div class="power-title">L'Armure Spirituelle contre Tous les Maléfices</div>
+                    </div>
+                    <div class="power-card">
+                        <div class="power-icon">🌿</div>
+                        <div class="power-title">La Formule Divine pour Guérir Toute Maladie</div>
+                    </div>
+                    <div class="power-card">
+                        <div class="power-icon">🪄</div>
+                        <div class="power-title">Les Incantations Secrètes pour Lancer des Sorts Puissants</div>
+                    </div>
+                    <div class="power-card">
+                        <div class="power-icon">🌌</div>
+                        <div class="power-title">Les Techniques Ultimes pour Vivre et Voyager dans le Monde Spirituel</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section de téléchargement -->
+        <section id="telechargement" style="padding: 40px 20px;">
+            <div class="card">
+                <div class="download-section">
+                    <div class="download-title">📥 Téléchargez Votre Grimoire</div>
+                    <p class="card-text">Votre exemplaire personnel est prêt !</p>
+                    <button class="download-btn" id="downloadBtn" onclick="downloadBook()">
+                        <span>⬇️</span>
+                        <span>Télécharger Maintenant</span>
+                    </button>
+                    <p style="margin-top: 20px; font-size: 0.9em; color: rgba(255,255,255,0.6);">
+                        Format PDF • 567 pages • Téléchargement sécurisé
+                    </p>
+                </div>
+
+                <p class="card-text" style="margin-top: 40px; text-align: center; font-size: 1.4em;">
+                    ✨ <span class="highlight">Votre voyage vers l'illumination commence maintenant !</span> ✨
+                </p>
+
+                <p class="card-text" style="text-align: center;">
+                    Merci de votre confiance ! 🙏
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer id="support">
+        <div class="footer-text">
+            <p style="margin-bottom: 10px; font-size: 1.1em; color: #ffd700;">
+                📧 Besoin d'aide ? Contactez notre support
+            </p>
+            <p>© 2024 Le Grimoire Ultime des Pouvoirs. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        // Three.js Scene Setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+        
+        camera.position.z = 5;
+
+        // Create particles
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 2000;
+        const posArray = new Float32Array(particlesCount * 3);
+        
+        for(let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 15;
+        }
+        
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.025,
+            color: 0xffd700,
+            transparent: true,
+            opacity: 0.8,
+            blending: THREE.AdditiveBlending
+        });
+        
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        // Create magical spheres
+        const sphereGeometry = new THREE.SphereGeometry(0.4, 32, 32);
+        const sphereMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffd700,
+            transparent: true,
+            opacity: 0.2,
+            wireframe: true
+        });
+        
+        const spheres = [];
+        for(let i = 0; i < 3; i++) {
+            const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+            sphere.position.x = Math.random() * 10 - 5;
+            sphere.position.y = Math.random() * 10 - 5;
+            sphere.position.z = Math.random() * 5 - 2;
+            spheres.push(sphere);
+            scene.add(sphere);
+        }
+
+        // Animation
+        let time = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.005;
+            
+            particlesMesh.rotation.y += 0.0008;
+            particlesMesh.rotation.x += 0.0004;
+            
+            spheres.forEach((sphere, i) => {
+                sphere.rotation.x += 0.008;
+                sphere.rotation.y += 0.008;
+                sphere.position.y = Math.sin(time + i) * 2;
+                sphere.position.x = Math.cos(time + i * 0.5) * 3;
+            });
+            
+            const positions = particlesGeometry.attributes.position.array;
+            for(let i = 0; i < positions.length; i += 3) {
+                positions[i + 1] = Math.sin(time + positions[i] * 0.5) * 0.3;
+            }
+            particlesGeometry.attributes.position.needsUpdate = true;
+            
+            renderer.render(scene, camera);
+        }
+        
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Import Supabase
+        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+        const supabaseUrl = "https://unzbrvdybxwmrdhftgfm.supabase.co";
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVuemJydmR5Ynh3bXJkaGZ0Z2ZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM2ODY3MTgsImV4cCI6MjA3OTI2MjcxOH0.SWUuoDpsca8oWFnbQPvvHN1ROqn0wyTJNTKfENzNXys";
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        // Function to download book
+        window.downloadBook = async function() {
+            const btn = document.getElementById('downloadBtn');
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            try {
+                btn.classList.add('downloading');
+                btn.innerHTML = '<span>⏳</span><span>Téléchargement en cours...</span>';
+                btn.disabled = true;
+
+                const { data, error } = await supabase.storage
+                    .from('ebooks')
+                    .download('pdf_5f2a3b7c9d8e4f1a.pdf');
+
+                if (error) throw error;
+
+                const url = URL.createObjectURL(data);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = "Le_Grimoire_Ultime_des_Pouvoirs.pdf";
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+
+                // Success notification
+                notificationText.textContent = '✅ Téléchargement réussi !';
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 4000);
+
+                btn.classList.remove('downloading');
+                btn.innerHTML = '<span>✅</span><span>Téléchargé !</span>';
+                
+                setTimeout(() => {
+                    btn.innerHTML = '<span>⬇️</span><span>Télécharger à nouveau</span>';
+                    btn.disabled = false;
+                }, 3000);
+
+            } catch (err) {
+                console.error(err);
+                notificationText.textContent = '❌ Erreur: ' + (err.message || 'Échec du téléchargement');
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 5000);
+
+                btn.classList.remove('downloading');
+                btn.innerHTML = '<span>⬇️</span><span>Réessayer</span>';
+                btn.disabled = false;
+            }
+        };
+
+        // Navigation mobile
+        window.toggleMenu = function() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        };
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                
+                if (targetSection) {
+                    targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    
+                    // Close mobile menu
+                    document.getElementById('navLinks').classList.remove('active');
+                    
+                    // Update active link
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            });
+        });
+
+        // Update active nav on scroll
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section[id]');
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (window.scrollY >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
 </body>
-</html>
+  </html>
